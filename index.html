@@ -17,6 +17,8 @@
     --shadow:rgba(75,64,48,.14);
     --pad-b:env(safe-area-inset-bottom,0px);
     --pad-t:env(safe-area-inset-top,0px);
+    --yay:cubic-bezier(.34,1.56,.64,1);
+    --akis:cubic-bezier(.22,1,.36,1);
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   html,body{height:100%;margin:0;overflow:hidden;overscroll-behavior:none;}
@@ -53,7 +55,8 @@
     cursor:pointer;flex:0 0 auto;font-family:inherit;
     transition:transform .12s cubic-bezier(.34,1.56,.64,1),background .15s;
   }
-  .iconbtn:active{transform:scale(.9);background:var(--surface-2);}
+  .iconbtn:active{transform:scale(.88);background:var(--surface-2);}
+  .iconbtn:hover{color:var(--ink);}
   .iconbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
   #btnMenu{font-size:22px;line-height:1;padding-bottom:3px;}
 
@@ -71,8 +74,11 @@
               overflow:hidden;border:1px solid rgba(0,0,0,.04);}
   .stat .mini i{display:block;height:100%;width:100%;border-radius:99px;background:var(--ink);
                 transition:width .3s cubic-bezier(.22,1,.36,1);}
-  .stat.moves .v{transition:transform .18s cubic-bezier(.34,1.56,.64,1),color .18s;}
+  .stat{transition:border-color .25s,transform .2s var(--yay);}
+  .stat .v{transition:transform .2s var(--yay),color .2s;}
   .stat.moves.bump .v{transform:scale(1.22);color:var(--accent);}
+  .stat.kazanc .v{transform:scale(1.16);color:var(--accent);}
+  .stat.kazanc{border-color:#C2A164;}
   .stat.moves.low .v{color:#B4614A;}
   .stat.moves.low .mini i{background:#B4614A;}
 
@@ -84,7 +90,8 @@
     transition:border-color .25s,background .25s;
   }
   .goal.done{border-color:#C2A164;background:#F3EDDF;}
-  .goal-icon{flex:0 0 auto;display:block;}
+  .goal-icon{flex:0 0 auto;display:block;transform-origin:50% 50%;}
+  .goal-icon.tik{animation:nabiz .42s var(--yay);}
   .goal-body{flex:1;min-width:0;}
   .goal-row{display:flex;align-items:baseline;gap:8px;}
   .goal-text{font-size:13px;font-weight:600;flex:1;min-width:0;line-height:1.25;
@@ -112,7 +119,10 @@
   .hint{
     text-align:center;font-size:11.5px;color:var(--dim);letter-spacing:.04em;
     margin-top:8px;height:14px;font-weight:600;
+    opacity:0;transform:translateY(4px);
+    transition:opacity .3s ease,transform .3s var(--akis);
   }
+  .hint.gor{opacity:1;transform:none;}
 
   /* ---------- overlays ---------- */
   .veil{
@@ -128,6 +138,7 @@
     max-height:86vh;overflow:auto;
   }
   .veil.on .sheet{transform:none;}
+  .veil .sheet{transition:transform .38s var(--akis),opacity .28s ease;}
   .sheet h2{margin:0;font-size:26px;letter-spacing:-.025em;font-weight:780;}
   .sheet .sub{margin:7px 0 0;color:var(--dim);font-size:13.5px;line-height:1.5;font-weight:550;}
 
@@ -145,7 +156,8 @@
     background:var(--surface-2);color:var(--dim);font-size:14px;font-weight:700;font-family:inherit;
     display:grid;place-items:center;cursor:pointer;transition:transform .12s;
   }
-  .closebtn:active{transform:scale(.9);}
+  .closebtn{transition:transform .16s var(--yay),background .15s;}
+  .closebtn:active{transform:scale(.86) rotate(90deg);}
   .closebtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
 
   .btn{
@@ -154,7 +166,7 @@
     letter-spacing:.01em;cursor:pointer;min-height:52px;
     transition:transform .12s cubic-bezier(.34,1.56,.64,1);
   }
-  .btn:active{transform:scale(.97);}
+  .btn:active{transform:scale(.965);}
   .btn.ghost{background:transparent;color:var(--dim);border:1px solid var(--line);margin-top:8px;}
   .btn.link{background:none;border:0;color:var(--dim);font-size:12.5px;font-weight:650;
             min-height:0;padding:12px;margin-top:2px;text-decoration:underline;text-underline-offset:3px;}
@@ -232,7 +244,8 @@
     padding:10px 12px;font-family:inherit;color:inherit;cursor:pointer;text-align:left;
     transition:background .15s;
   }
-  .region-head:active{background:var(--surface);}
+  .region-head{transition:background .16s,transform .16s var(--yay);}
+  .region-head:active{background:var(--surface);transform:scale(.99);}
   .region-head:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
   .region.kilitli .region-head{opacity:.55;}
   .rdot{width:11px;height:11px;border-radius:50%;flex:0 0 auto;box-shadow:inset 0 -2px 0 rgba(0,0,0,.14);}
@@ -263,7 +276,9 @@
     font-size:13.5px;font-weight:780;border:1px solid var(--line);background:var(--surface);
     color:var(--dim);transition:transform .14s cubic-bezier(.34,1.56,.64,1);
   }
-  .node:active .disc{transform:scale(.9);}
+  .ncard{transition:transform .16s var(--yay),border-color .2s,box-shadow .2s;}
+  .node:active .disc{transform:scale(.88);}
+  .node:not(.kilitli):active .ncard{transform:scale(.985);}
   .node.bitti .disc{background:#EADFC8;border-color:#D9C7A4;color:#7A6A4C;}
   .node.simdi .disc{background:var(--ink);border-color:var(--ink);color:#F6F1E8;box-shadow:0 0 0 4px rgba(59,53,44,.12);}
   .node.kilitli .disc{opacity:.45;}
@@ -287,8 +302,54 @@
         white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .nfoot{display:block;font-size:10.5px;color:var(--dim);font-weight:650;margin-top:5px;letter-spacing:.02em;}
 
+
+  /* ---------- hareket ---------- */
+  @keyframes yukselFade{ from{opacity:0;transform:translateY(10px);} to{opacity:1;transform:none;} }
+  @keyframes kartGir{ from{opacity:0;transform:translateY(9px) scale(.985);} to{opacity:1;transform:none;} }
+  @keyframes nabiz{ 0%{transform:scale(1);} 45%{transform:scale(1.18);} 100%{transform:scale(1);} }
+  @keyframes markaGir{ from{opacity:0;transform:scale(.86) translateY(6px);} to{opacity:1;transform:none;} }
+
+  /* oyun ekranı: bölüm açılışında HUD sırayla yerine otursun */
+  #app.giris .topbar{animation:yukselFade .46s var(--akis) .02s backwards;}
+  #app.giris .hud{animation:yukselFade .46s var(--akis) .08s backwards;}
+  #app.giris .goal{animation:yukselFade .46s var(--akis) .14s backwards;}
+  #app.giris .stage{animation:kartGir .52s var(--akis) .18s backwards;}
+
+  /* ana menü */
+  #menuVeil.on .brand canvas{animation:markaGir .58s var(--yay) .04s backwards;}
+  #menuVeil.on .brand h1{animation:yukselFade .5s var(--akis) .10s backwards;}
+  #menuVeil.on .brand p{animation:yukselFade .5s var(--akis) .16s backwards;}
+  #menuVeil.on .menu-stats>div{animation:kartGir .46s var(--yay) backwards;}
+  #menuVeil.on .menu-stats>div:nth-child(1){animation-delay:.20s;}
+  #menuVeil.on .menu-stats>div:nth-child(2){animation-delay:.26s;}
+  #menuVeil.on .menu-stats>div:nth-child(3){animation-delay:.32s;}
+  #menuVeil.on .menu-actions>button{animation:yukselFade .44s var(--akis) backwards;}
+  #menuVeil.on .menu-actions>button:nth-child(1){animation-delay:.36s;}
+  #menuVeil.on .menu-actions>button:nth-child(2){animation-delay:.42s;}
+  #menuVeil.on .menu-actions>button:nth-child(3){animation-delay:.48s;}
+  #menuVeil.on .menu-actions>button:nth-child(4){animation-delay:.54s;}
+  #menuVeil.on .menu-foot{animation:yukselFade .44s var(--akis) .60s backwards;}
+
+  /* kağıt içerikleri — liste ve yol kendi ritmiyle girdiği için dışarıda */
+  .veil.on .sheet>*:not(.rules):not(.road){animation:yukselFade .4s var(--akis) backwards;}
+  .veil.on .sheet>*:nth-child(1){animation-delay:.08s;}
+  .veil.on .sheet>*:nth-child(2){animation-delay:.13s;}
+  .veil.on .sheet>*:nth-child(3){animation-delay:.18s;}
+  .veil.on .sheet>*:nth-child(4){animation-delay:.23s;}
+  .veil.on .sheet>*:nth-child(5){animation-delay:.28s;}
+  .veil.on .sheet>*:nth-child(6){animation-delay:.33s;}
+
+  .veil.on .rules li{animation:yukselFade .42s var(--akis) backwards;}
+  .veil.on .rules li:nth-child(1){animation-delay:.16s;}
+  .veil.on .rules li:nth-child(2){animation-delay:.22s;}
+  .veil.on .rules li:nth-child(3){animation-delay:.28s;}
+  .veil.on .rules li:nth-child(4){animation-delay:.34s;}
+
+  /* yol haritası: yalnızca yeni açılan bölgenin bölümleri sırayla belirir */
+  .node.gir{animation:kartGir .34s var(--yay) backwards;}
+
   @media (prefers-reduced-motion: reduce){
-    *{transition-duration:.01ms !important;}
+    *{transition-duration:.01ms !important;animation-duration:.01ms !important;animation-delay:0s !important;}
     .stars svg.on{animation-duration:.01ms;}
   }
 </style>
@@ -314,7 +375,7 @@
       <div class="v" id="movesV">0</div>
       <div class="mini"><i id="movesBar"></i></div>
     </div>
-    <div class="stat">
+    <div class="stat" id="cardScore">
       <div class="k">Puan</div>
       <div class="v" id="scoreV">0</div>
       <div class="note" id="bestNote">En iyi —</div>
@@ -457,7 +518,26 @@ function mulberry32(a){
     return ((t^t>>>14)>>>0)/4294967296;
   };
 }
-function buzz(ms){ try{ if(navigator.vibrate && !REDUCED) navigator.vibrate(ms); }catch(e){} }
+// Ses yok, yalnızca dokunsal bir iz. Gelen değerler tek katsayıyla kısılıp
+// tavana vuruyor; en güçlü olay bile hafif bir tık gibi kalsın. Aynı ana
+// düşen çağrılar tek darbede birleşiyor — hem ortak dinleyicinin hem
+// düğmenin kendi çağrısının ateşlediği çift tık böylece duyulmuyor.
+// Alt sınır 8 ms: birçok cihaz daha kısa darbeyi hiç oynatmıyor.
+// Üst sınır 24 ms: en güçlü olay bile bildirim değil, tık gibi kalsın.
+const TIT={ dokun:20, sec:26, onay:34, ret:40 };
+let titBirikim=0, titSayac=0;
+function buzz(ms){
+  try{
+    if(!navigator.vibrate || REDUCED) return;
+    titBirikim=Math.max(titBirikim,clamp(Math.round(ms*0.45),8,24));
+    if(titSayac) return;
+    titSayac=setTimeout(()=>{
+      titSayac=0;
+      const v=titBirikim; titBirikim=0;
+      try{ navigator.vibrate(v); }catch(e){}
+    },30);
+  }catch(e){}
+}
 
 function roundRect(ctx,x,y,w,h,r){
   const rr=Math.min(r,w/2,h/2);
@@ -893,7 +973,7 @@ async function takasDene(a,b){
   await takasAnimasyon(ga,gb,true);
   const kumeler=kumeleriBul();
   if(!kumeler.length){
-    buzz(12);
+    buzz(TIT.ret);
     await takasAnimasyon(ga,gb,true,true);
     durum="oyna";
     return;
@@ -1062,6 +1142,7 @@ async function cozumle(swap){
 
 function puanEkle(v,cx,cy,zincir){
   puan+=v;
+  kartTepki("cardScore","kazanc",260);
   floats.push({ x:cx, y:cy, t:0, txt:"+"+fmt(v), alt: zincir>1?("x"+zincir+" zincir"):"", sc:zincir>1?1.15:1 });
   hudGuncelle();
 }
@@ -1144,6 +1225,7 @@ cv.addEventListener("pointerdown",e=>{
     return;
   }
   secili=h;
+  buzz(TIT.dokun);
   const g=at(h.r,h.c); if(g) g.scale=1.12;
 });
 cv.addEventListener("pointermove",e=>{
@@ -1579,12 +1661,39 @@ function dongu(now){
 
 const el=id=>document.getElementById(id);
 
-let ikonBolum=-1;
+let ikonBolum=-1, puanGosterilen=0, puanRaf=0, sonIlerleme=0;
+
+// Puan bir anda değil, kısa bir yay ile hedefine akıyor.
+function puanYaz(hedef){
+  const kutu=el("scoreV");
+  if(REDUCED||Math.abs(hedef-puanGosterilen)<2){
+    cancelAnimationFrame(puanRaf);
+    puanGosterilen=hedef; kutu.textContent=fmt(hedef); return;
+  }
+  cancelAnimationFrame(puanRaf);
+  const bas=puanGosterilen, fark=hedef-bas, t0=performance.now();
+  const sure=clamp(240+Math.abs(fark)*0.35,240,640);
+  const adim=now=>{
+    const q=clamp((now-t0)/sure,0,1);
+    puanGosterilen=Math.round(bas+fark*easeOutCubic(q));
+    kutu.textContent=fmt(puanGosterilen);
+    if(q<1) puanRaf=requestAnimationFrame(adim);
+  };
+  puanRaf=requestAnimationFrame(adim);
+}
+function kartTepki(id,sinif,sure){
+  const k=el(id);
+  k.classList.remove(sinif);
+  void k.offsetWidth;                 // sınıfı yeniden tetikle
+  k.classList.add(sinif);
+  setTimeout(()=>k.classList.remove(sinif),sure);
+}
+
 function hudGuncelle(){
   el("levelNo").textContent="Bölüm "+L.n;
   el("levelRegion").textContent=bolgeBilgi(bolgeNo(L.n)).ad;
   el("movesV").textContent=hamle;
-  el("scoreV").textContent=fmt(puan);
+  puanYaz(puan);
 
   const kartH=el("cardMoves");
   kartH.classList.toggle("low",hamle<=4);
@@ -1600,10 +1709,19 @@ function hudGuncelle(){
   el("goalCount").textContent=fmt(Math.min(su,h.miktar))+" / "+fmt(h.miktar);
   el("goalBar").style.width=clamp(su/h.miktar*100,0,100)+"%";
   el("goal").classList.toggle("done",su>=h.miktar);
+  if(su>sonIlerleme && h.tip!=="skor"){
+    const ik=el("goalIcon");
+    ik.classList.remove("tik"); void ik.offsetWidth; ik.classList.add("tik");
+  }
+  sonIlerleme=su;
 }
 function ipucu(txt){
-  el("hint").textContent=txt||"";
-  if(txt) setTimeout(()=>{ if(el("hint").textContent===txt) el("hint").textContent=""; },2200);
+  const h=el("hint");
+  h.textContent=txt||"";
+  h.classList.toggle("gor",!!txt);
+  if(txt) setTimeout(()=>{
+    if(h.textContent===txt){ h.classList.remove("gor"); setTimeout(()=>{ if(h.textContent===txt) h.textContent=""; },320); }
+  },2200);
 }
 
 /* ============================ akış / ekranlar ============================ */
@@ -1764,6 +1882,7 @@ function ekranGoster(o){
     u.onclick=()=>o.onUcuncul();
   } else u.hidden=true;
 
+  buzz(TIT.dokun);
   el("veil").classList.add("on");
 }
 function veilKapat(){ el("veil").classList.remove("on"); }
@@ -1776,7 +1895,9 @@ function yolHaritasiAc(){
   const acik=Math.max(1,Save.mem.level||1);
   acikBolgeler.add(bolgeNo(acik));          // bulunduğun bölge hep açık gelsin
   acikBolgeler.add(bolgeNo(acik)+1);
+  sonAcilanBolge=bolgeNo(acik);
   haritaCiz();
+  buzz(TIT.dokun);
   el("mapVeil").classList.add("on");
   requestAnimationFrame(()=>{
     const road=el("road"), simdi=road.querySelector(".node.simdi");
@@ -1785,7 +1906,8 @@ function yolHaritasiAc(){
 }
 function yolHaritasiKapat(){ el("mapVeil").classList.remove("on"); }
 
-function haritaDugum(n,acik,sk){
+let sonAcilanBolge=null;
+function haritaDugum(n,acik,sk,gecikme){
   const kayit=sk[n], kilitli=n>acik;
   const LN=bolumUret(n), m=hedefMetni(LN);
 
@@ -1819,8 +1941,10 @@ function haritaDugum(n,acik,sk){
     kilitli ? "Önceki bölümü bitirince açılır"
             : LN.hamle+" hamle" + (kayit ? " · En iyi "+fmt(kayit[1]) : "");
 
+  if(gecikme>=0){ b.classList.add("gir"); b.style.animationDelay=gecikme.toFixed(3)+"s"; }
+
   if(kilitli){ b.disabled=true; b.setAttribute("aria-disabled","true"); }
-  else b.onclick=()=>{ yolHaritasiKapat(); veilKapat(); bolumBaslat(n); };
+  else b.onclick=()=>{ buzz(TIT.sec); yolHaritasiKapat(); veilKapat(); bolumBaslat(n); };
   return b;
 }
 
@@ -1867,7 +1991,10 @@ function haritaCiz(){
       ? '<span class="kilit">Kilitli</span>'
       : '<span class="ry">★</span>'+bYildiz+" / "+(BOLGE_BOY*3);
     bas.onclick=()=>{
-      if(acikBolgeler.has(bn)) acikBolgeler.delete(bn); else acikBolgeler.add(bn);
+      const kapaniyor=acikBolgeler.has(bn);
+      if(kapaniyor) acikBolgeler.delete(bn); else acikBolgeler.add(bn);
+      sonAcilanBolge = kapaniyor ? null : bn;   // yalnız yeni açılan bölge kıpırdasın
+      buzz(TIT.dokun);
       haritaCiz();
     };
     bolum.appendChild(bas);
@@ -1875,7 +2002,8 @@ function haritaCiz(){
     if(acikMi){
       const govde=document.createElement("div");
       govde.className="region-body";
-      for(let n=B.ilk;n<=B.son;n++) govde.appendChild(haritaDugum(n,acik,sk));
+      for(let n=B.ilk;n<=B.son;n++)
+        govde.appendChild(haritaDugum(n,acik,sk, bn===sonAcilanBolge ? (n-B.ilk)*0.022 : -1));
       bolum.appendChild(govde);
     }
     road.appendChild(bolum);
@@ -1922,6 +2050,7 @@ function anaMenuAc(){
   menuGeri = durum==="oyna" ? "oyna" : null;
   if(durum==="oyna") durum="menu";              // menü açıkken tahta duraklar
   menuTazele();
+  buzz(TIT.dokun);
   el("menuVeil").classList.add("on");
 }
 function anaMenuKapat(){
@@ -1937,7 +2066,11 @@ function bolumBaslat(n,sessiz){
   secili=null; bas=null; shake=0; hintTimer=0; hintMove=null;
   tahtaKur();
   olcuAyarla();
+  puanGosterilen=0; sonIlerleme=0;
   hudGuncelle();
+  const uyg=el("app");
+  uyg.classList.remove("giris"); void uyg.offsetWidth; uyg.classList.add("giris");
+  setTimeout(()=>uyg.classList.remove("giris"),900);
   durum="hazir";
   if(sessiz) return;                       // menü arkasında tahtayı sessizce kur
 
@@ -1986,7 +2119,7 @@ function yardimKur(){
   }
 }
 
-function yardimAc(){ el("helpVeil").classList.add("on"); }
+function yardimAc(){ buzz(TIT.dokun); el("helpVeil").classList.add("on"); }
 function yardimKapat(){ el("helpVeil").classList.remove("on"); }
 
 /* ============================ tuşlar ============================ */
@@ -2018,6 +2151,12 @@ el("mReset").onclick=async()=>{
   bolumBaslat(1,true);
   menuTazele();
 };
+
+// Her düğme aynı dokunsal izi versin diye tek yerden dinleniyor.
+document.addEventListener("pointerdown",e=>{
+  const t=e.target.closest && e.target.closest(".btn,.iconbtn,.closebtn");
+  if(t) buzz(TIT.dokun);
+},{passive:true});
 
 // perde dışına dokununca kapat
 for(const [id,kapat] of [["mapVeil",yolHaritasiKapat],["helpVeil",yardimKapat]]){
