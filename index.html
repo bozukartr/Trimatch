@@ -116,13 +116,28 @@
   .stage{flex:1;position:relative;display:grid;place-items:center;margin-top:10px;min-height:0;}
   canvas#board{display:block;border-radius:22px;touch-action:none;}
 
+  .boardwrap{display:flex;flex-direction:column;align-items:stretch;}
+  .hintbar{
+    position:relative;height:30px;margin-top:7px;flex:0 0 auto;
+    display:flex;align-items:center;justify-content:center;
+  }
   .hint{
     text-align:center;font-size:11.5px;color:var(--dim);letter-spacing:.04em;
-    margin-top:8px;height:14px;font-weight:600;
+    font-weight:600;padding:0 84px;
     opacity:0;transform:translateY(4px);
     transition:opacity .3s ease,transform .3s var(--akis);
   }
   .hint.gor{opacity:1;transform:none;}
+  .hintbtn{
+    position:absolute;right:0;top:50%;transform:translateY(-50%);
+    border:1px solid var(--line);background:var(--surface);color:var(--dim);
+    border-radius:11px;padding:7px 13px;font-family:inherit;font-size:11.5px;
+    font-weight:700;letter-spacing:.06em;cursor:pointer;
+    transition:transform .14s var(--yay),opacity .2s,background .15s;
+  }
+  .hintbtn:active{transform:translateY(-50%) scale(.9);background:var(--surface-2);}
+  .hintbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+  .hintbtn[disabled]{opacity:.35;cursor:default;}
 
   /* ---------- overlays ---------- */
   .veil{
@@ -172,6 +187,8 @@
             min-height:0;padding:12px;margin-top:2px;text-decoration:underline;text-underline-offset:3px;}
   .btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
   .btn .alt{display:block;font-size:11.5px;font-weight:600;opacity:.72;margin-top:3px;letter-spacing:.02em;}
+  .linkrow{display:flex;gap:4px;margin-top:2px;}
+  .linkrow .btn{margin-top:0;}
 
   .tally{display:flex;gap:8px;margin-top:16px;}
   .tally div{flex:1;background:var(--surface-2);border-radius:14px;padding:10px 11px;}
@@ -393,8 +410,15 @@
     </div>
   </div>
 
-  <div class="stage"><canvas id="board"></canvas></div>
-  <div class="hint" id="hint" aria-live="polite"></div>
+  <div class="stage">
+    <div class="boardwrap">
+      <canvas id="board"></canvas>
+      <div class="hintbar">
+        <span class="hint" id="hint" aria-live="polite"></span>
+        <button class="hintbtn" id="btnHint" aria-label="İpucu göster">İpucu</button>
+      </div>
+    </div>
+  </div>
 
   <!-- ana menü -->
   <div class="veil" id="menuVeil">
@@ -434,7 +458,10 @@
       </div>
       <button class="btn" id="vPrimary">Başla</button>
       <button class="btn ghost" id="vSecondary" hidden>Baştan başla</button>
-      <button class="btn link" id="vTertiary" hidden>Ana menü</button>
+      <div class="linkrow">
+        <button class="btn link" id="vMap">Yol haritası</button>
+        <button class="btn link" id="vMenu">Ana menü</button>
+      </div>
     </div>
   </div>
 
@@ -628,8 +655,9 @@ function bolumUret(n){
 
   // önce hamle bütçesi, hedefler ondan türetilir — böylece her bölüm çözülebilir kalır
   const taban = tip==="skor" ? 18 : tip==="renk" ? 17 : tip==="kum" ? 19 : 20;
-  const hamle = Math.max(13, Math.round(taban + Math.floor(rnd()*6) - Math.min(6,(n-1)*0.2)));
-  const zorluk = 0.74 + Math.min(0.48,(n-1)*0.021);
+  const hamleKesinti = Math.min(6,(n-1)*0.2) + Math.min(2,Math.max(0,n-31)*0.02);
+  const hamle = Math.max(12, Math.round(taban + Math.floor(rnd()*6) - hamleKesinti));
+  const zorluk = 0.74 + Math.min(0.48,(n-1)*0.021) + Math.min(0.18,Math.max(0,n-24)*0.0035);
 
   const referans = Math.round(hamle*(365+Math.min(255,n*6))*zorluk);
 
@@ -655,7 +683,7 @@ function bolumUret(n){
     let kalan=hedef.miktar, i=0;
     while(kalan>0 && i<havuz.length){
       const [r,c]=havuz[i++];
-      const kat = (ciftKat && kalan>=2 && rnd()<0.4) ? 2 : 1;
+      const kat = (ciftKat && kalan>=2 && rnd()<(n>=32?0.58:0.4)) ? 2 : 1;
       sand[r][c]=kat; kalan-=kat;
     }
     hedef.miktar-=kalan;                     // tahta küçükse hedefi kırp
@@ -716,6 +744,10 @@ let rnd=Math.random;
 let cell=48, boardX=0, boardY=0, boardW=0, boardH=0;
 let dpr=1;
 
+const zeminCv=document.createElement("canvas");
+const zctx=zeminCv.getContext("2d");
+let zeminKirli=true;
+
 let durum="hazir";          // hazir | oyna | mesgul | bitti
 let hamle=0, puan=0, ilerleme=0, uretilenGuc=0;
 let shake=0, shakeX=0, shakeY=0;
@@ -756,6 +788,7 @@ function tahtaKur(){
   }
   let guvenlik=0;
   while(!hamleVarMi() && guvenlik++<60) karistir(true);
+  zeminKirli=true;
 }
 function baslangicKotu(r,c,t){
   if(c>=2 && at(r,c-1)&&at(r,c-2) && at(r,c-1).type===t && at(r,c-2).type===t) return true;
@@ -763,9 +796,10 @@ function baslangicKotu(r,c,t){
   return false;
 }
 
+const IPUCU_YER=37;                      // .hintbar yüksekliği + üst boşluk
 function olcuAyarla(){
-  const stage=cv.parentElement;
-  const w=stage.clientWidth, h=stage.clientHeight;
+  const stage=document.querySelector(".stage");
+  const w=stage.clientWidth, h=stage.clientHeight-IPUCU_YER;
   if(w<=0||h<=0) return;
   const pad=6;
   cell=Math.floor(Math.min((w-pad*2)/cols,(h-pad*2)/rows));
@@ -775,6 +809,43 @@ function olcuAyarla(){
   cv.style.width=boardW+"px"; cv.style.height=boardH+"px";
   ctx.setTransform(dpr,0,0,dpr,0,0);
   boardX=0; boardY=0;
+  zeminKirli=true;
+}
+
+// Hücreler ve kum karoları — yalnızca tahta kurulduğunda, ölçü
+// değiştiğinde ya da bir kum karo eksildiğinde yeniden çizilir.
+function zeminCiz(){
+  if(boardW<=0||boardH<=0) return;          // ölçü hazır değil, kirli kalsın
+  zeminCv.width=Math.round(boardW*dpr); zeminCv.height=Math.round(boardH*dpr);
+  zctx.setTransform(dpr,0,0,dpr,0,0);
+  zctx.clearRect(0,0,boardW,boardH);
+  for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){
+    if(blocked[r][c]) continue;
+    const x=c*cell, y=r*cell, m=cell*0.035;
+    roundRect(zctx,x+m,y+m,cell-m*2,cell-m*2,cell*0.24);
+    zctx.fillStyle=(r+c)%2===0?CELL_A:CELL_B; zctx.fill();
+    zctx.strokeStyle=CELL_LINE; zctx.lineWidth=1; zctx.stroke();
+
+    if(sand[r][c]>0){
+      const p=cell*0.08;
+      roundRect(zctx,x+p,y+p,cell-p*2,cell-p*2,cell*0.21);
+      zctx.fillStyle=sand[r][c]>1?SAND2:SAND1; zctx.fill();
+      zctx.save();
+      roundRect(zctx,x+p,y+p,cell-p*2,cell-p*2,cell*0.21); zctx.clip();
+      zctx.fillStyle="rgba(255,255,255,.30)";
+      for(let i=0;i<7;i++){
+        const gx=x+p+((i*37)%(cell-p*2)), gy=y+p+((i*53)%(cell-p*2));
+        zctx.fillRect(gx,gy,1.6,1.6);
+      }
+      zctx.fillStyle="rgba(90,72,44,.16)";
+      for(let i=0;i<6;i++){
+        const gx=x+p+((i*29+13)%(cell-p*2)), gy=y+p+((i*47+7)%(cell-p*2));
+        zctx.fillRect(gx,gy,1.4,1.4);
+      }
+      zctx.restore();
+    }
+  }
+  zeminKirli=false;
 }
 window.addEventListener("resize",()=>{ olcuAyarla(); });
 
@@ -907,6 +978,7 @@ function hucreYok(k,gecikme,renk){
   g.durum="clear"; g.t=-gecikme; g.flash=1;
   if(sand[r][c]>0){
     sand[r][c]--;
+    zeminKirli=true;
     ilerlemeEkle("kum",1);
     kumZerre(r,c);
   }
@@ -1201,6 +1273,39 @@ function tumHamleler(){
   }
   return out;
 }
+// Rastgele bir geçerli hamle yerine en verimlisini öner: takası deneyip
+// açılan kümelerin büyüklüğüne bakıyor, özel taş doğuran hamleyi öne alıyor.
+function hamlePuani(a,b){
+  const ga=at(a[0],a[1]), gb=at(b[0],b[1]);
+  if(!ga||!gb) return 0;
+  if(ga.power||gb.power) return 60;         // özel taş takası her zaman güçlü
+  const t=ga.type; ga.type=gb.type; gb.type=t;
+  let p=0;
+  for(const k of kumeleriBul()){            // tahta duruyorken tek kaynak bu takas
+    p+=k.cells.length;
+    if(k.guc===P_PRISM) p+=16;
+    else if(k.guc===P_BOMB) p+=9;
+    else if(k.guc) p+=5;
+  }
+  const t2=ga.type; ga.type=gb.type; gb.type=t2;
+  return p;
+}
+function enIyiHamle(){
+  const hepsi=tumHamleler();
+  if(!hepsi.length) return null;
+  let en=hepsi[0], enP=-1;
+  for(const h of hepsi){
+    const p=hamlePuani(h[0],h[1]);
+    if(p>enP){ enP=p; en=h; }
+  }
+  return en;
+}
+function ipucuGoster(){
+  if(durum!=="oyna") return;
+  hintMove=enIyiHamle();
+  hintT=0; hintArandi=true; hintTimer=0;
+  if(!hintMove) ipucu("Şu an geçerli bir hamle yok");
+}
 function ipucuSifirla(){ hintTimer=0; hintMove=null; hintT=0; hintArandi=false; }
 
 /* ============================ giriş ============================ */
@@ -1462,33 +1567,9 @@ function ciz(t,dt){
   ctx.save();
   ctx.translate(shakeX,shakeY);
 
-  // hücreler
-  for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){
-    if(blocked[r][c]) continue;
-    const x=boardX+c*cell, y=boardY+r*cell, m=cell*0.035;
-    roundRect(ctx,x+m,y+m,cell-m*2,cell-m*2,cell*0.24);
-    ctx.fillStyle=(r+c)%2===0?CELL_A:CELL_B; ctx.fill();
-    ctx.strokeStyle=CELL_LINE; ctx.lineWidth=1; ctx.stroke();
-
-    if(sand[r][c]>0){
-      const p=cell*0.08;
-      roundRect(ctx,x+p,y+p,cell-p*2,cell-p*2,cell*0.21);
-      ctx.fillStyle=sand[r][c]>1?SAND2:SAND1; ctx.fill();
-      ctx.save();
-      roundRect(ctx,x+p,y+p,cell-p*2,cell-p*2,cell*0.21); ctx.clip();
-      ctx.fillStyle="rgba(255,255,255,.30)";
-      for(let i=0;i<7;i++){
-        const gx=x+p+((i*37)%(cell-p*2)), gy=y+p+((i*53)%(cell-p*2));
-        ctx.fillRect(gx,gy,1.6,1.6);
-      }
-      ctx.fillStyle="rgba(90,72,44,.16)";
-      for(let i=0;i<6;i++){
-        const gx=x+p+((i*29+13)%(cell-p*2)), gy=y+p+((i*47+7)%(cell-p*2));
-        ctx.fillRect(gx,gy,1.4,1.4);
-      }
-      ctx.restore();
-    }
-  }
+  // hücreler ve kum — önceden çizilmiş zemin
+  if(zeminKirli) zeminCiz();
+  if(zeminCv.width>0) ctx.drawImage(zeminCv,boardX,boardY,boardW,boardH);
 
   // seçili
   if(secili&&durum==="oyna"){
@@ -1579,7 +1660,7 @@ function ciz(t,dt){
 
 /* ============================ döngü ============================ */
 
-let son=performance.now(), zaman=0;
+let son=performance.now(), zaman=0, sonDurum=null;
 function dongu(now){
   let dt=(now-son)/1000; son=now;
   dt=Math.min(dt,0.05);
@@ -1642,12 +1723,12 @@ function dongu(now){
   for(let i=rings.length-1;i>=0;i--){ rings[i].t+=dt; if(rings[i].t>0.55) rings.splice(i,1); }
   for(let i=floats.length-1;i>=0;i--){ floats[i].t+=dt; if(floats[i].t>1.0) floats.splice(i,1); }
 
+  if(sonDurum!==durum){ sonDurum=durum; el("btnHint").disabled = durum!=="oyna"; }
   if(durum==="oyna"){
     hintTimer+=dt;
     if(hintTimer>IPUCU_GECIKME&&!hintArandi){
       hintArandi=true;
-      const hepsi=tumHamleler();
-      hintMove = hepsi.length ? hepsi[Math.floor(Math.random()*hepsi.length)] : null;
+      hintMove=enIyiHamle();
       hintT=0;
     }
     if(hintMove) hintT+=dt;
@@ -1727,6 +1808,8 @@ function ipucu(txt){
 /* ============================ akış / ekranlar ============================ */
 
 let bolumNo=1, enIyi=0, puanHedefte=0, hamleHedefte=0;
+const EK_HAMLE=5;
+let devamKalan=1, devamKullanildi=false;
 
 function hedefTamam(){
   const h=L.hedef;
@@ -1798,16 +1881,16 @@ async function kazandi(){
   await Save.put({ level:Math.max(Save.mem.level||1,bolumNo), best:Math.max(Save.mem.best||0,puan), sk });
 
   const yeniBolge = bolgeNo(bolumNo)!==bolgeNo(L.n);
+  const buBolum=L.n;
   ekranGoster({
     baslik:"Bölüm tamam",
     alt:yildizNotu(yildiz)+(yeniBolge?" Yeni bölge açıldı: "+bolgeBilgi(bolgeNo(bolumNo)).ad+".":""),
     tally:true, yildiz,
     birincil:"Bölüm "+bolumNo+"’e geç",
-    ikincil:"Yol haritası", ikincilKapatma:false,
-    ucuncul:"Ana menü",
+    ikincil: yildiz<3 ? "Bu bölümü tekrar oyna" : null, ikincilKapatma:true,
     onBirincil:()=>bolumBaslat(bolumNo),
-    onIkincil:()=>yolHaritasiAc(),
-    onUcuncul:()=>{ veilKapat(); bolumBaslat(bolumNo,true); anaMenuAc(); }
+    onIkincil:()=>bolumBaslat(buBolum),
+    menuOncesi:()=>bolumBaslat(bolumNo,true)
   });
 }
 
@@ -1815,29 +1898,48 @@ async function kazandi(){
 // bölümlerde puan zaten hedefe eşit olduğu için verim tek adil ölçü.
 function yildizHesapla(){
   const oran=hamleHedefte/L.hamle;
-  if(oran>=L.yildizOran[0]) return 3;
-  if(oran>=L.yildizOran[1]) return 2;
-  return 1;
+  let y = oran>=L.yildizOran[0] ? 3 : oran>=L.yildizOran[1] ? 2 : 1;
+  if(devamKullanildi) y=Math.min(2,y);
+  return y;
 }
 function yildizNotu(y){
+  if(devamKullanildi && y===2)
+    return "İki yıldız. Ek hamle aldığın için tavan buydu; tek oturuşta bitirirsen üçüncüsü gelir.";
   if(y===3) return "Üç yıldız. Hedefi bol hamle kalmışken bitirdin.";
   if(y===2) return "İki yıldız. Hedefe daha az hamlede varırsan üçüncüsü gelir.";
   return "Hedef tamam. Tekrar oynayıp daha hızlı bitirirsen yıldız toplarsın.";
+}
+
+// Aynı tahtadan beş hamleyle sürdürme. Hak bölüm başına bir kez;
+// kullanıldığında yıldız tavanı ikiye iniyor, üç yıldız hep tek
+// oturuşta bitirmenin karşılığı kalsın diye.
+function devamEt(){
+  devamKalan--; devamKullanildi=true;
+  hamle+=EK_HAMLE;
+  hudGuncelle();
+  kartTepki("cardMoves","bump",260);
+  buzz(TIT.onay);
+  ipucu(EK_HAMLE+" hamle eklendi");
+  ipucuSifirla();
+  durum="oyna";
 }
 
 async function kaybetti(){
   durum="bitti";
   await wait(280);
   const n=L.n;
+  const devamVar=devamKalan>0;
   ekranGoster({
     baslik:"Hamleler bitti",
-    alt:"Hedefe ulaşmak için birkaç hamle eksik kaldı. Tahta yeniden kurulacak.",
-    tally:true, birincil:"Tekrar dene",
-    ikincil:"Yol haritası", ikincilKapatma:false,
-    ucuncul:"Ana menü",
-    onBirincil:()=>bolumBaslat(n),
-    onIkincil:()=>yolHaritasiAc(),
-    onUcuncul:()=>{ veilKapat(); bolumBaslat(n,true); anaMenuAc(); }
+    alt: devamVar
+      ? "Hedefe az kaldı. Aynı tahtadan "+EK_HAMLE+" hamleyle sürdürebilirsin; bu bölümden en çok iki yıldız çıkar."
+      : "Hedefe ulaşmak için birkaç hamle eksik kaldı. Tahta yeniden kurulacak.",
+    tally:true,
+    birincil: devamVar ? EK_HAMLE+" hamle ekle" : "Tekrar dene",
+    ikincil: devamVar ? "Tekrar dene" : null, ikincilKapatma:true,
+    onBirincil:()=>{ if(devamVar) devamEt(); else bolumBaslat(n); },
+    onIkincil:()=>bolumBaslat(n),
+    menuOncesi:()=>bolumBaslat(n,true)
   });
 }
 
@@ -1876,11 +1978,8 @@ function ekranGoster(o){
     s2.onclick=()=>{ if(o.ikincilKapatma!==false) veilKapat(); o.onIkincil(); };
   } else s2.hidden=true;
 
-  const u=el("vTertiary");
-  if(o.ucuncul){
-    u.hidden=false; u.textContent=o.ucuncul;
-    u.onclick=()=>o.onUcuncul();
-  } else u.hidden=true;
+  el("vMap").onclick=()=>yolHaritasiAc();
+  el("vMenu").onclick=()=>{ veilKapat(); if(o.menuOncesi) o.menuOncesi(); anaMenuAc(); };
 
   buzz(TIT.dokun);
   el("veil").classList.add("on");
@@ -2050,7 +2149,6 @@ function anaMenuAc(){
   menuGeri = durum==="oyna" ? "oyna" : null;
   if(durum==="oyna") durum="menu";              // menü açıkken tahta duraklar
   menuTazele();
-  buzz(TIT.dokun);
   el("menuVeil").classList.add("on");
 }
 function anaMenuKapat(){
@@ -2062,6 +2160,7 @@ function anaMenuKapat(){
 function bolumBaslat(n,sessiz){
   L=bolumUret(n);
   hamle=L.hamle; puan=0; ilerleme=0; uretilenGuc=0; puanHedefte=0; hamleHedefte=0;
+  devamKalan=1; devamKullanildi=false;
   parts.length=0; rings.length=0; floats.length=0;
   secili=null; bas=null; shake=0; hintTimer=0; hintMove=null;
   tahtaKur();
@@ -2082,11 +2181,7 @@ function bolumBaslat(n,sessiz){
     alt:bolgeBilgi(bolgeNo(n)).ad+" · "+duzMetin(m.html)+" · "+L.hamle+" hamle. "+
         (kayit?"En iyin "+fmt(kayit[1])+" puan, "+kayit[0]+" yıldız.":dz+"."),
     tally:false, birincil:"Başla",
-    ikincil:"Yol haritası", ikincilKapatma:false,
-    ucuncul:"Ana menü",
-    onBirincil:()=>{ durum="oyna"; ipucuSifirla(); },
-    onIkincil:()=>yolHaritasiAc(),
-    onUcuncul:()=>{ veilKapat(); anaMenuAc(); }
+    onBirincil:()=>{ durum="oyna"; ipucuSifirla(); }
   });
 }
 
@@ -2125,6 +2220,7 @@ function yardimKapat(){ el("helpVeil").classList.remove("on"); }
 /* ============================ tuşlar ============================ */
 
 el("btnMenu").onclick=()=>anaMenuAc();
+el("btnHint").onclick=()=>ipucuGoster();
 el("btnMap").onclick=()=>yolHaritasiAc();
 el("mapClose").onclick=yolHaritasiKapat;
 el("btnHelp").onclick=yardimAc;
