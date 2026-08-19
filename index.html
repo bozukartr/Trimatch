@@ -159,10 +159,11 @@
   .altin-ik{display:block;flex:0 0 auto;}
   .bst{width:46px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:0;}
   .bst canvas{display:block;}
-  .bst .fy{font-size:9.5px;font-weight:750;letter-spacing:.02em;color:var(--dim);}
+  .bst .sy{font-size:10px;font-weight:780;letter-spacing:.02em;color:var(--ink);}
   .bst.etkin{background:var(--ink);border-color:var(--ink);}
-  .bst.etkin .fy{color:#F6F1E8;}
-  .bst.yetersiz{opacity:.42;}
+  .bst.etkin .sy{color:#F6F1E8;}
+  .bst.bos{opacity:.45;}
+  .bst.bos .sy{color:var(--dim);}
   .gucbar .hintbtn{
     margin-left:auto;display:flex;align-items:center;padding:0 12px;
     font-size:11.5px;font-weight:700;letter-spacing:.06em;
@@ -176,41 +177,36 @@
     font-size:12.5px;font-weight:650;color:var(--dim);
   }
   .shop-bakiye b{margin-left:auto;font-size:17px;font-weight:780;color:var(--ink);}
-  .demo-not{
+  .kazanc-not{
     margin-top:8px;flex:0 0 auto;border:1px dashed #C2A164;border-radius:14px;
     padding:10px 12px;font-size:11.5px;line-height:1.5;color:var(--dim);font-weight:550;
   }
-  .demo-not b{color:var(--ink);font-weight:750;}
-  .paketler{margin-top:10px;overflow:auto;flex:0 1 auto;}
-  .paket{
-    display:flex;align-items:center;gap:11px;width:100%;text-align:left;
+  .kazanc-not b{color:var(--ink);font-weight:750;}
+  .guc-liste{margin-top:10px;overflow:auto;flex:1 1 auto;min-height:0;}
+  .guc-satir{
+    display:flex;align-items:center;gap:11px;
     background:var(--surface);border:1px solid var(--line);border-radius:16px;
-    padding:11px 13px;margin-top:8px;font-family:inherit;color:inherit;cursor:pointer;
-    transition:transform .14s var(--yay),background .15s;
+    padding:11px 12px;margin-top:8px;
   }
-  .paket:first-child{margin-top:0;}
-  .paket:active{transform:scale(.985);background:var(--surface-2);}
-  .paket:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
-  .paket canvas{flex:0 0 auto;display:block;}
-  .paket .pm{flex:1;min-width:0;}
-  .paket .pad{display:block;font-size:14.5px;font-weight:780;letter-spacing:-.01em;}
-  .paket .pet{
-    display:inline-block;margin-left:6px;font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;
-    font-weight:750;background:#EADFC8;color:#7A6A4C;border-radius:6px;padding:2px 5px;vertical-align:2px;
-  }
-  .paket .pal{display:block;font-size:11px;color:var(--dim);font-weight:620;margin-top:2px;}
-  .paket .pf{
-    flex:0 0 auto;background:var(--ink);color:#F6F1E8;border-radius:11px;
-    padding:8px 11px;font-size:12.5px;font-weight:750;white-space:nowrap;
-  }
-  .paket .pf s{display:block;font-size:8px;letter-spacing:.12em;opacity:.72;text-decoration:none;font-weight:700;}
-  .guc-liste{margin-top:14px;flex:0 0 auto;border-top:1px solid var(--line);padding-top:12px;}
-  .guc-satir{display:flex;align-items:center;gap:10px;padding:7px 0;}
-  .guc-satir canvas{flex:0 0 auto;display:block;}
+  .guc-satir:first-child{margin-top:0;}
+  .guc-satir>canvas{flex:0 0 auto;display:block;}
   .guc-satir .gm{flex:1;min-width:0;}
-  .guc-satir .gad{display:block;font-size:12.5px;font-weight:750;}
-  .guc-satir .gac{display:block;font-size:11px;color:var(--dim);font-weight:600;line-height:1.35;margin-top:1px;}
-  .guc-satir .gfy{font-size:12px;font-weight:780;color:var(--accent);white-space:nowrap;}
+  .guc-satir .gad{display:block;font-size:13px;font-weight:780;letter-spacing:-.01em;}
+  .guc-satir .gsay{
+    display:inline-block;margin-left:6px;font-size:9px;letter-spacing:.1em;text-transform:uppercase;
+    font-weight:750;background:#EADFC8;color:#7A6A4C;border-radius:6px;padding:2px 6px;vertical-align:1px;
+  }
+  .guc-satir .gac{display:block;font-size:11px;color:var(--dim);font-weight:600;line-height:1.4;margin-top:3px;}
+  .al{
+    flex:0 0 auto;background:var(--ink);color:#F6F1E8;border:0;border-radius:12px;
+    padding:9px 11px;font-family:inherit;font-size:12px;font-weight:780;white-space:nowrap;
+    cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px;
+    transition:transform .14s var(--yay),opacity .2s;
+  }
+  .al s{font-size:8.5px;letter-spacing:.12em;opacity:.7;text-decoration:none;font-weight:700;}
+  .al:active{transform:scale(.92);}
+  .al:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+  .al[disabled]{opacity:.35;cursor:default;}
   .tally .v.alt{color:var(--accent);}
 
   /* ---------- overlays ---------- */
@@ -499,12 +495,12 @@
       <canvas id="board"></canvas>
       <span class="hint" id="hint" aria-live="polite"></span>
       <div class="gucbar">
-        <button class="altin" id="altinChip" aria-label="Mağazayı aç">
+        <button class="altin" id="altinChip" aria-label="Güç deposunu aç">
           <canvas class="altin-ik" aria-hidden="true"></canvas><b id="altinV">0</b>
         </button>
-        <button class="bst" id="bst-takas"><canvas aria-hidden="true"></canvas><span class="fy"></span></button>
-        <button class="bst" id="bst-patlat"><canvas aria-hidden="true"></canvas><span class="fy"></span></button>
-        <button class="bst" id="bst-prizma"><canvas aria-hidden="true"></canvas><span class="fy"></span></button>
+        <button class="bst" id="bst-takas"><canvas aria-hidden="true"></canvas><span class="sy"></span></button>
+        <button class="bst" id="bst-patlat"><canvas aria-hidden="true"></canvas><span class="sy"></span></button>
+        <button class="bst" id="bst-prizma"><canvas aria-hidden="true"></canvas><span class="sy"></span></button>
         <button class="hintbtn" id="btnHint" aria-label="İpucu göster">İpucu</button>
       </div>
     </div>
@@ -528,7 +524,7 @@
       <div class="menu-actions">
         <button class="btn" id="mPlay">Oyna</button>
         <button class="btn ghost" id="mMap">Yol haritası</button>
-        <button class="btn ghost" id="mShop">Mağaza</button>
+        <button class="btn ghost" id="mShop">Güç deposu</button>
         <button class="btn ghost" id="mHelp">Nasıl oynanır</button>
         <button class="btn link" id="mReset">İlerlemeyi sıfırla</button>
       </div>
@@ -584,8 +580,8 @@
     <div class="sheet">
       <div class="sheet-head">
         <div style="flex:1;min-width:0">
-          <h2>Mağaza</h2>
-          <p class="sub">Altınla güçleri satın alırsın. Bölüm bitirdikçe de altın kazanırsın.</p>
+          <h2>Güç deposu</h2>
+          <p class="sub">Bölüm bitirerek kazandığın altınla güç alırsın; aldıkların depoda birikir.</p>
         </div>
         <button class="closebtn" id="shopClose" aria-label="Kapat">✕</button>
       </div>
@@ -593,11 +589,7 @@
         <canvas class="altin-ik" id="shopIk" aria-hidden="true"></canvas>
         <span>Kesende</span><b id="shopAltin">0</b>
       </div>
-      <div class="demo-not">
-        <b>Bu mağaza bir gösterimdir.</b> Gerçek ödeme alınmaz, kart bilgisi istenmez;
-        paketlere dokunduğunda altın doğrudan eklenir. Fiyatlar yalnızca örnektir.
-      </div>
-      <div class="paketler" id="paketler"></div>
+      <div class="kazanc-not" id="kazancNot"></div>
       <div class="guc-liste" id="gucListe"></div>
     </div>
   </div>
@@ -650,16 +642,12 @@ const BST = {
             aciklama:"Rastgele bir taşı prizmaya çevirir. Bölüm hedefi olan özel taş sayısına eklenmez." }
 };
 
-// Gösterim paketleri. Gerçek bir mağaza bağlanacaksa ödeme çağrısı
-// yalnızca satinAl() içine girer; oyunun geri kalanı değişmez.
-const PAKETLER = [
-  { altin:500,  fiyat:"₺29,99"  },
-  { altin:1200, fiyat:"₺59,99",  etiket:"En popüler" },
-  { altin:3000, fiyat:"₺119,99", etiket:"En iyi değer" }
-];
+// Güçler yalnızca oyunda kazanılan altınla alınır ve depoda birikir.
+const BASLANGIC_ENV = { takas:1, patlat:1, prizma:0 };
 
 // Bölüm sonu kazancı: taban + yıldız başına, ilk bitirişte ek kese.
-const altinOdul = (yildiz,ilkKez)=> 20 + 20*yildiz + (ilkKez?40:0);
+const ODUL_TABAN=20, ODUL_YILDIZ=20, ODUL_ILK=40;
+const altinOdul = (yildiz,ilkKez)=> ODUL_TABAN + ODUL_YILDIZ*yildiz + (ilkKez?ODUL_ILK:0);
 
 const P_ROW="row", P_COL="col", P_BOMB="bomb", P_PRISM="prism";
 
@@ -720,8 +708,8 @@ function roundRect(ctx,x,y,w,h,r){
 
 const Save = {
   KEY:"kumuc:ilerleme",
-  bos(){ return { level:1, best:0, sk:{}, altin:BASLANGIC_ALTIN }; },
-  mem:{ level:1, best:0, sk:{}, altin:BASLANGIC_ALTIN },
+  bos(){ return { level:1, best:0, sk:{}, altin:BASLANGIC_ALTIN, env:Object.assign({},BASLANGIC_ENV) }; },
+  mem:{ level:1, best:0, sk:{}, altin:BASLANGIC_ALTIN, env:Object.assign({},BASLANGIC_ENV) },
   _yerelOku(){ try{ return window.localStorage ? localStorage.getItem(this.KEY) : null; }catch(e){ return null; } },
   _yerelYaz(v){ try{ if(window.localStorage) localStorage.setItem(this.KEY,v); }catch(e){} },
   async load(){
@@ -740,6 +728,9 @@ const Save = {
     // Eski kayıtlarda altın alanı yok; ilk açılışta hoş geldin kesesi veriliyor.
     if(typeof this.mem.altin!=="number"||!isFinite(this.mem.altin)) this.mem.altin=BASLANGIC_ALTIN;
     this.mem.altin=Math.max(0,Math.floor(this.mem.altin));
+    // Envanteri olmayan kayıtlar başlangıç desteğiyle açılıyor.
+    if(!this.mem.env||typeof this.mem.env!=="object") this.mem.env=Object.assign({},BASLANGIC_ENV);
+    for(const t in BST) this.mem.env[t]=Math.max(0,Math.floor(this.mem.env[t]||0));
     this.mem.level=Math.max(1,this.mem.level|0);
     this.mem.best=Math.max(0,this.mem.best|0);
     return this.mem;
@@ -1328,10 +1319,27 @@ function altinVer(n){
   Save.put({ altin: altinVar()+n });
   altinGuncelle(true);
 }
-function altinHarca(n){
-  if(altinVar()<n) return false;
-  Save.put({ altin: altinVar()-n });
+const envSay = t => (Save.mem.env && Save.mem.env[t])|0;
+
+// Depodan bir güç eksiltir. Kullanım anında para değil, stok harcanıyor.
+function envKullan(t){
+  if(envSay(t)<=0) return false;
+  const e=Object.assign({},Save.mem.env||{});
+  e[t]=Math.max(0,(e[t]|0)-1);
+  Save.put({ env:e });
+  gucDugmeleri();
+  return true;
+}
+
+// Depoya bir güç ekler; altın yetmiyorsa hiçbir şey değişmez.
+function gucSatinAl(t){
+  const f=BST[t].fiyat;
+  if(altinVar()<f) return false;
+  const e=Object.assign({},Save.mem.env||{});
+  e[t]=(e[t]|0)+1;
+  Save.put({ altin:altinVar()-f, env:e });
   altinGuncelle(false);
+  buzz(TIT.onay);
   return true;
 }
 function altinGuncelle(artti){
@@ -1349,8 +1357,12 @@ function gucDugmeleri(){
   for(const tip in BST){
     const b=el("bst-"+tip);
     if(!b) continue;
+    const adet=envSay(tip);
     b.classList.toggle("etkin",bstModu===tip);
-    b.classList.toggle("yetersiz",altinVar()<BST[tip].fiyat);
+    b.classList.toggle("bos",adet<=0);
+    const sy=b.querySelector(".sy");
+    if(sy) sy.textContent=adet>0?"×"+adet:"0";
+    b.setAttribute("aria-label",BST[tip].ad+" — depoda "+adet+" adet");
   }
 }
 
@@ -1364,7 +1376,7 @@ function bstIptal(){
 function bstBaslat(tip){
   if(durum!=="oyna"){ bstIptal(); return; }
   if(bstModu===tip){ bstIptal(); return; }
-  if(altinVar()<BST[tip].fiyat){ magazaAc(); return; }
+  if(envSay(tip)<=0){ magazaAc(); return; }      // stok yoksa depoyu aç
   if(tip==="prizma"){ bstPrizma(); return; }   // hedef seçmez, doğrudan uygulanır
   bstModu=tip; bstSecili=null;
   ipucuSifirla();
@@ -1374,7 +1386,7 @@ function bstBaslat(tip){
 }
 
 async function bstPatlat(r,c){
-  if(!altinHarca(BST.patlat.fiyat)) return;
+  if(!envKullan("patlat")) return;
   bstIptal();
   durum="mesgul";
   sarsinti(11); halka(c,r,1.5); buzz(TIT.onay);
@@ -1392,7 +1404,7 @@ async function bstPatlat(r,c){
 async function bstTakas(a,b){
   const ga=at(a.r,a.c), gb=at(b.r,b.c);
   if(!ga||!gb) return;
-  if(!altinHarca(BST.takas.fiyat)) return;
+  if(!envKullan("takas")) return;
   bstIptal();
   durum="mesgul";
   buzz(TIT.onay);
@@ -1410,7 +1422,7 @@ function bstPrizma(){
     if(g&&!g.power&&g.durum==="idle") adaylar.push(g);
   }
   if(!adaylar.length){ ipucu("Uygun taş yok"); return; }
-  if(!altinHarca(BST.prizma.fiyat)) return;
+  if(!envKullan("prizma")) return;
   bstIptal();
   const g=adaylar[Math.floor(Math.random()*adaylar.length)];
   g.power=P_PRISM; g.flash=1;
@@ -2513,58 +2525,41 @@ function haritaCiz(){
   }
 }
 
-/* ---- mağaza ---- */
-
-// Gösterim satın alması. Gerçek bir ödeme sağlayıcısı bağlanacaksa
-// yalnızca bu fonksiyonun içi değişir: onay dönerse altinVer çağrılır.
-function satinAl(i){
-  const pk=PAKETLER[i];
-  if(!pk) return;
-  altinVer(pk.altin);
-  magazaCiz();
-  ipucu(fmt(pk.altin)+" altın eklendi — demo, ödeme alınmadı");
-  buzz(TIT.onay);
-}
+/* ---- güç deposu ---- */
 
 function magazaCiz(){
   el("shopAltin").textContent=fmt(altinVar());
   altinIkonCiz(el("shopIk"),20);
-
-  const kutu=el("paketler");
-  kutu.innerHTML="";
-  PAKETLER.forEach((pk,i)=>{
-    const b=document.createElement("button");
-    b.className="paket";
-    b.innerHTML='<canvas aria-hidden="true"></canvas>'+
-      '<span class="pm"><span class="pad"></span><span class="pal"></span></span>'+
-      '<span class="pf"><s>Demo</s><span class="pfy"></span></span>';
-    altinIkonCiz(b.querySelector("canvas"),30);
-    const ad=b.querySelector(".pad");
-    ad.textContent=fmt(pk.altin)+" altın";
-    if(pk.etiket){
-      const et=document.createElement("span");
-      et.className="pet"; et.textContent=pk.etiket;
-      ad.appendChild(et);
-    }
-    b.querySelector(".pal").textContent="Yaklaşık "+Math.floor(pk.altin/BST.takas.fiyat)+" yer değiştirme gücü";
-    b.querySelector(".pfy").textContent=pk.fiyat;
-    b.onclick=()=>satinAl(i);
-    kutu.appendChild(b);
-  });
+  el("kazancNot").innerHTML=
+    "<b>Altın bölüm bitirerek kazanılır.</b> Her bölümden "+ODUL_TABAN+
+    " altın, kazandığın yıldız başına "+ODUL_YILDIZ+
+    " altın, bir bölümü ilk kez bitirdiğinde "+ODUL_ILK+" altın daha.";
 
   const liste=el("gucListe");
   liste.innerHTML="";
   for(const tip in BST){
-    const g=BST[tip];
+    const g=BST[tip], adet=envSay(tip), alinabilir=altinVar()>=g.fiyat;
     const sat=document.createElement("div");
     sat.className="guc-satir";
     sat.innerHTML='<canvas aria-hidden="true"></canvas>'+
       '<span class="gm"><span class="gad"></span><span class="gac"></span></span>'+
-      '<span class="gfy"></span>';
-    gucIkonCiz(sat.querySelector("canvas"),tip,26);
-    sat.querySelector(".gad").textContent=g.ad;
+      '<button class="al"><s>Satın al</s><span class="alf"></span></button>';
+    gucIkonCiz(sat.querySelector("canvas"),tip,34);
+    const ad=sat.querySelector(".gad");
+    ad.textContent=g.ad;
+    const rozet=document.createElement("span");
+    rozet.className="gsay";
+    rozet.textContent = adet>0 ? "Depoda "+adet : "Depon boş";
+    ad.appendChild(rozet);
     sat.querySelector(".gac").textContent=g.aciklama;
-    sat.querySelector(".gfy").textContent=fmt(g.fiyat)+" altın";
+    const dg=sat.querySelector(".al");
+    dg.querySelector(".alf").textContent=fmt(g.fiyat)+" altın";
+    dg.disabled=!alinabilir;
+    dg.setAttribute("aria-label",g.ad+" satın al, "+g.fiyat+" altın");
+    dg.onclick=()=>{
+      if(gucSatinAl(tip)){ magazaCiz(); ipucu(g.ad+" depona eklendi"); }
+      else ipucu("Yeterli altının yok");
+    };
     liste.appendChild(sat);
   }
 }
@@ -2597,7 +2592,7 @@ function menuTazele(){
   el("mBest").textContent=fmtKisa(Save.mem.best||0);
 
   const n=Math.max(1,Save.mem.level||1);
-  el("mShop").textContent="Mağaza · "+fmt(altinVar())+" altın";
+  el("mShop").textContent="Güç deposu · "+fmt(altinVar())+" altın";
   el("mPlay").innerHTML=(biten?"Devam et":"Oyna")+
     '<span class="alt">Bölüm '+n+' · '+bolgeBilgi(bolgeNo(n)).ad+'</span>';
 
@@ -2658,9 +2653,9 @@ function yardimKur(){
     {guc:P_PRISM,type:4,t:"Beş yan yana → prizma",d:"Yanındaki taşla yer değiştir, o renkteki bütün taşlar tahtadan kalkar."},
     {guc:null,type:1,t:"Özel taşları birleştir",d:"İki özel taşı yan yana sürüklediğinde etkileri birleşir. Prizma + prizma tahtayı süpürür. Prizma + başka bir özel taş, o renkteki bütün taşları o özele çevirir ve hepsini aynı anda ateşler."},
     {guc:P_COL,type:5,dokunus:true,t:"Özel taşı ateşle",d:"Özel taşa dokunmak onu yerinde patlatır. Sıradan bir taşla yer değiştirmek de aynı işi görür; eşleşme aranmaz. İkisi de bir hamle harcar."},
-    {ekguc:"takas", t:"Yer değiştir · "+BST.takas.fiyat+" altın", d:"Komşu iki taşı eşleşme aranmadan değiştirir. Hamle harcamaz."},
-    {ekguc:"patlat",t:"Patlat · "+BST.patlat.fiyat+" altın",   d:"Seçtiğin tek taşı kaldırır. Özel taşa dokunursan gücü açılır. Hamle harcamaz."},
-    {ekguc:"prizma",t:"Prizma · "+BST.prizma.fiyat+" altın",   d:"Rastgele bir taşı prizmaya çevirir. Hamle harcamaz; bölüm hedefi olan özel taş sayısına eklenmez."}
+    {ekguc:"takas", t:"Yer değiştir · "+BST.takas.fiyat+" altın", d:"Komşu iki taşı eşleşme aranmadan değiştirir. Depodan bir adet harcar, hamle harcamaz."},
+    {ekguc:"patlat",t:"Patlat · "+BST.patlat.fiyat+" altın",   d:"Seçtiğin tek taşı kaldırır. Özel taşa dokunursan gücü açılır. Depodan bir adet harcar."},
+    {ekguc:"prizma",t:"Prizma · "+BST.prizma.fiyat+" altın",   d:"Rastgele bir taşı prizmaya çevirir. Bölüm hedefi olan özel taş sayısına eklenmez."}
   ];
   for(const v of veriler){
     const li=document.createElement("li");
@@ -2705,8 +2700,6 @@ function gucBarKur(){
   for(const tip in BST){
     const b=el("bst-"+tip);
     gucIkonCiz(b.querySelector("canvas"),tip,22);
-    b.querySelector(".fy").textContent=BST[tip].fiyat;
-    b.setAttribute("aria-label",BST[tip].ad+" — "+BST[tip].fiyat+" altın");
     b.onclick=()=>bstBaslat(tip);
   }
   altinGuncelle(false);
