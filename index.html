@@ -678,7 +678,7 @@ function mulberry32(a){
 // düğmenin kendi çağrısının ateşlediği çift tık böylece duyulmuyor.
 // Alt sınır 8 ms: birçok cihaz daha kısa darbeyi hiç oynatmıyor.
 // Üst sınır 24 ms: en güçlü olay bile bildirim değil, tık gibi kalsın.
-const TIT={ dokun:20, sec:26, onay:34, ret:40 };
+const TIT={ hamle:18, dokun:20, sec:26, onay:34, ret:40 };
 let titBirikim=0, titSayac=0;
 function buzz(ms){
   try{
@@ -886,6 +886,11 @@ let hamle=0, puan=0, ilerleme=0, uretilenGuc=0;
 let shake=0, shakeX=0, shakeY=0;
 const parts=[];
 const rings=[];
+const isinlar=[];        // ok güçlerinin süpürdüğü şerit
+const soklar=[];         // bomba ve prizmanın şok dalgası
+const sualar=[];         // prizmadan hedeflere giden ışınlar
+let flash=0;             // tahta üstü parlama
+let donma=0;             // darbe duraklaması (hitstop)
 const floats=[];
 let hintTimer=0, hintMove=null, hintT=0, hintArandi=false;
 const IPUCU_GECIKME=5;
@@ -1190,6 +1195,7 @@ async function takasDene(a,b){
 
 function hamleHarca(){
   hamle=Math.max(0,hamle-1);
+  buzz(TIT.hamle);                 // her hamlede çok hafif bir tık
   const card=document.getElementById("cardMoves");
   card.classList.add("bump");
   setTimeout(()=>card.classList.remove("bump"),190);
@@ -1234,14 +1240,22 @@ function ozelKombo(a,b){
 async function komboUygula(kombo,ga,gb){
   const r=gb.r,c=gb.c;
   let hedefler=[];
+  // Kısa bir gerilim: iki taş şişip parlıyor, sonra patlama geliyor.
+  ga.flash=1; gb.flash=1; ga.scale=1.34; gb.scale=1.34;
+  halka(c,r,1.1);
+  await wait(REDUCED?0:110);
   if(kombo.tip==="tumu"){
     for(let y=0;y<rows;y++) for(let x=0;x<cols;x++) if(oyn(y,x)) hedefler.push(key(y,x));
     sarsinti(20); halka(c,r,Math.max(rows,cols));
+    sok(c+.5,r+.5,Math.max(rows,cols)); parlama(0.7); dur(120);
   }else if(kombo.tip==="prizma-renk"){
     const t=kombo.oteki.type;
     for(let y=0;y<rows;y++) for(let x=0;x<cols;x++){ const g=at(y,x); if(g&&g.type===t) hedefler.push(key(y,x)); }
     hedefler.push(key(kombo.prizma.r,kombo.prizma.c));
-    sarsinti(12); halka(c,r,4);
+    // prizmadan her hedefe ışın uzanıyor
+    for(const k of hedefler) sua(kombo.prizma.c+.5,kombo.prizma.r+.5,kc(k)+.5,kr(k)+.5,GEMS[t].c);
+    sarsinti(12); halka(c,r,4); sok(c+.5,r+.5,3.2); parlama(0.26); dur(80);
+    await wait(REDUCED?0:150);
   }else if(kombo.tip==="prizma-guc"){
     const t=kombo.oteki.type, g2=kombo.oteki.power;
     const donusen=[];
@@ -1250,8 +1264,9 @@ async function komboUygula(kombo,ga,gb){
       if(g&&g.type===t&&g!==kombo.oteki){ g.power=g2; g.flash=1; donusen.push(key(y,x)); }
     }
     hedefler.push(key(kombo.prizma.r,kombo.prizma.c),key(kombo.oteki.r,kombo.oteki.c));
-    sarsinti(14);
-    await wait(200);                 // dönüşüm gözle görülsün
+    for(const k of donusen) sua(kombo.prizma.c+.5,kombo.prizma.r+.5,kc(k)+.5,kr(k)+.5,GEMS[t].c);
+    sarsinti(14); parlama(0.24); dur(70);
+    await wait(REDUCED?0:200);       // dönüşüm gözle görülsün
     // Dönüşen taşlar da hedefe giriyor: zincirGenislet her birinin gücünü
     // ayrı ayrı açıyor, böylece hepsi aynı anda ateşleniyor.
     for(const k of donusen) hedefler.push(k);
@@ -1259,23 +1274,27 @@ async function komboUygula(kombo,ga,gb){
   }else if(kombo.tip==="arti"){
     for(let x=0;x<cols;x++) if(oyn(r,x)) hedefler.push(key(r,x));
     for(let y=0;y<rows;y++) if(oyn(y,c)) hedefler.push(key(y,c));
-    sarsinti(12);
+    sarsinti(12); isin(r,c,"h"); isin(r,c,"v"); parlama(0.18); dur(70);
   }else if(kombo.tip==="buyuk-bomba"){
     for(let y=r-2;y<=r+2;y++) for(let x=c-2;x<=c+2;x++) if(oyn(y,x)) hedefler.push(key(y,x));
-    sarsinti(16); halka(c,r,3);
+    sarsinti(16); halka(c,r,3); sok(c+.5,r+.5,3.6); parlama(0.3); dur(90);
+    zerre(c,r,"#FFE7BC",16);
   }else if(kombo.tip==="uc-serit"){
     for(let dy=-1;dy<=1;dy++) for(let x=0;x<cols;x++) if(oyn(r+dy,x)) hedefler.push(key(r+dy,x));
     for(let dx=-1;dx<=1;dx++) for(let y=0;y<rows;y++) if(oyn(y,c+dx)) hedefler.push(key(y,c+dx));
-    sarsinti(14);
+    sarsinti(14); parlama(0.22); dur(80);
+    for(let d=-1;d<=1;d++){ isin(r+d,c,"h"); isin(r,c+d,"v"); }
   }else if(kombo.tip==="guc-tek"){
     const g=kombo.guc;
     hedefler.push(key(g.r,g.c));
     sarsinti(g.power===P_PRISM?18:g.power===P_BOMB?12:9);
     halka(g.c,g.r,g.power===P_PRISM?3:1.6);
   }
+  await wait(REDUCED?0:40);
   // guc-tek'te gücü silmiyoruz: zincirGenislet etkiyi taşın kendisinden açıyor.
   if(kombo.tip!=="guc-tek"){ ga.power=null; gb.power=null; }
-  const {temiz}=zincirGenislet(hedefler,null);
+  const {temiz,etki}=zincirGenislet(hedefler,null);
+  gucEfekti(etki);
   const liste=[...temiz];
   puanEkle(liste.length*70,c,r,1);
   buzz(28);
@@ -1299,7 +1318,8 @@ async function gucPatlat(r,c){
   halka(c,r,g.power===P_PRISM?3:1.6);
   buzz(TIT.onay);
 
-  const {temiz}=zincirGenislet([key(r,c)],null);
+  const {temiz,etki}=zincirGenislet([key(r,c)],null);
+  gucEfekti(etki);
   const liste=[...temiz];
   puanEkle(liste.length*70,c,r,1);
   let i=0;
@@ -1390,7 +1410,8 @@ async function bstPatlat(r,c){
   bstIptal();
   durum="mesgul";
   sarsinti(11); halka(c,r,1.5); buzz(TIT.onay);
-  const {temiz}=zincirGenislet([key(r,c)],null);
+  const {temiz,etki}=zincirGenislet([key(r,c)],null);
+  gucEfekti(etki);
   const liste=[...temiz];
   puanEkle(liste.length*40,c,r,1);
   let i=0;
@@ -1473,7 +1494,8 @@ async function cozumle(swap){
     }
     let toplam=0, cx=0, cy=0, n=0;
     for(const kume of kumeler){
-      const {temiz}=zincirGenislet(kume.cells,korunan);
+      const {temiz,etki}=zincirGenislet(kume.cells,korunan);
+      gucEfekti(etki);
       const liste=[...temiz];
       toplam+=liste.length;
       let i=0;
@@ -1490,6 +1512,10 @@ async function cozumle(swap){
         uretilenGuc++;
         if(L.hedef.tip==="guc") ilerleme++;
         halka(c,r,d.guc===P_PRISM?3:1.8);
+        sok(c+.5,r+.5,d.guc===P_PRISM?2.6:1.7);
+        zerre(c,r,d.guc===P_PRISM?"#FFF6E4":GEMS[g.type].c,d.guc===P_PRISM?14:8);
+        parlama(d.guc===P_PRISM?0.34:0.12);
+        dur(d.guc===P_PRISM?70:35);
         buzz(d.guc===P_PRISM?40:20);
       }
     }
@@ -1668,13 +1694,53 @@ cv.addEventListener("pointercancel",()=>{ bas=null; });
 
 function sarsinti(v){ if(REDUCED) return; shake=Math.min(22,shake+v); }
 function halka(c,r,gucR){ rings.push({x:c+.5,y:r+.5,t:0,max:gucR}); }
-function zerre(c,r,renk,adet){
+
+// yön verilirse zerreler o eksende savrulur — ok güçleri için
+function zerre(c,r,renk,adet,yon){
   if(REDUCED) adet=Math.min(adet,3);
   for(let i=0;i<adet;i++){
     const a=Math.random()*Math.PI*2, s=1.6+Math.random()*4.2;
-    parts.push({x:c+.5,y:r+.5,vx:Math.cos(a)*s,vy:Math.sin(a)*s-1.6,t:0,d:.5+Math.random()*.45,
+    let vx=Math.cos(a)*s, vy=Math.sin(a)*s-1.6;
+    if(yon){
+      const it=(0.7+Math.random()*1.1)*(Math.random()<0.5?-1:1);
+      vx=vx*0.3+yon.x*it; vy=vy*0.3+yon.y*it;
+    }
+    parts.push({x:c+.5,y:r+.5,vx,vy,t:0,d:.5+Math.random()*.45,
                 r:.05+Math.random()*.09,col:renk,rot:Math.random()*6.28,vr:(Math.random()-.5)*10});
   }
+}
+
+function isin(r,c,yon,renk){
+  if(REDUCED) return;
+  isinlar.push({r,c,yon,t:0,d:0.44,renk:renk||"#FFF6E4"});
+}
+function sok(x,y,R,renk){
+  if(REDUCED) return;
+  soklar.push({x,y,R,t:0,d:0.52,renk:renk||"201,168,116"});
+}
+function sua(x1,y1,x2,y2,renk){
+  if(REDUCED) return;
+  sualar.push({x1,y1,x2,y2,t:0,d:0.42,renk:renk||"#FFF6E4"});
+}
+function parlama(v){ if(REDUCED) return; flash=Math.min(1,flash+v); }
+function dur(ms){ if(REDUCED) return; donma=Math.max(donma,ms/1000); }
+
+// Zincir açılırken hangi gücün patladığını biliyoruz; her biri kendi
+// imzasını bırakıyor: oklar şerit, bomba ve prizma şok dalgası.
+function gucEfekti(liste){
+  if(!liste||!liste.length) return;
+  for(const e of liste){
+    if(e.power===P_ROW){      isin(e.r,e.c,"h"); zerre(e.c,e.r,"#FFF1D8",7,{x:3.4,y:0}); }
+    else if(e.power===P_COL){ isin(e.r,e.c,"v"); zerre(e.c,e.r,"#FFF1D8",7,{x:0,y:3.4}); }
+    else if(e.power===P_BOMB){ sok(e.c+.5,e.r+.5,2.3); zerre(e.c,e.r,"#FFE7BC",11); parlama(0.10); }
+    else if(e.power===P_PRISM){
+      sok(e.c+.5,e.r+.5,3.4); parlama(0.34);
+      // tahta henüz temizlenmedi; prizmanın hedefleri buradan okunuyor
+      for(const k of gucHucreleri(P_PRISM,e.r,e.c,e.type))
+        sua(e.c+.5,e.r+.5,kc(k)+.5,kr(k)+.5,GEMS[e.type].c);
+    }
+  }
+  dur(liste.length>=2?75:45);
 }
 function kumZerre(r,c){ zerre(c,r,SAND2,5); }
 
@@ -1725,13 +1791,17 @@ function gemYol(ctx,type,x,y,s){
   }
 }
 
-function gucCiz(ctx,power,x,y,s,type){
+// t verildiğinde semboller yerinde canlanır (tahtada); ikon ve yardım
+// çizimlerinde t yok, bu yüzden orada duruş sabit kalıyor.
+function gucCiz(ctx,power,x,y,s,type,t){
+  t=t||0;
+  const nb=0.5+0.5*Math.sin(t*3.6);
   ctx.save();
   ctx.lineCap="round";
   if(power===P_ROW||power===P_COL){
-    ctx.strokeStyle="rgba(255,252,245,.92)";
+    ctx.strokeStyle="rgba(255,252,245,"+(0.82+nb*0.18)+")";
     ctx.lineWidth=s*0.10;
-    const L1=s*0.36;
+    const L1=s*(0.33+nb*0.05);
     ctx.beginPath();
     if(power===P_ROW){ ctx.moveTo(x-L1,y); ctx.lineTo(x+L1,y); }
     else { ctx.moveTo(x,y-L1); ctx.lineTo(x,y+L1); }
@@ -1748,16 +1818,19 @@ function gucCiz(ctx,power,x,y,s,type){
     }
     ctx.stroke();
   }else if(power===P_BOMB){
-    ctx.strokeStyle="rgba(255,252,245,.9)";
+    ctx.strokeStyle="rgba(255,252,245,"+(0.78+nb*0.22)+")";
     ctx.lineWidth=s*0.075;
-    ctx.beginPath(); ctx.arc(x,y,s*0.24,0,6.2832); ctx.stroke();
+    ctx.beginPath(); ctx.arc(x,y,s*(0.21+nb*0.045),0,6.2832); ctx.stroke();
     ctx.fillStyle="rgba(255,252,245,.9)";
-    for(let i=0;i<4;i++){
-      const a=Math.PI/4+i*Math.PI/2;
-      ctx.beginPath(); ctx.arc(x+Math.cos(a)*s*0.38,y+Math.sin(a)*s*0.38,s*0.05,0,6.2832); ctx.fill();
+    for(let i=0;i<4;i++){                       // noktalar yavaşça dönüyor
+      const a=Math.PI/4+i*Math.PI/2+t*0.9;
+      const rr=s*(0.36+nb*0.03);
+      ctx.beginPath(); ctx.arc(x+Math.cos(a)*rr,y+Math.sin(a)*rr,s*0.05,0,6.2832); ctx.fill();
     }
   }else if(power===P_PRISM){
     const n=GEMS.length;
+    ctx.save();
+    ctx.translate(x,y); ctx.rotate(t*0.55); ctx.translate(-x,-y);
     for(let i=0;i<n;i++){
       ctx.beginPath();
       ctx.moveTo(x,y);
@@ -1765,8 +1838,9 @@ function gucCiz(ctx,power,x,y,s,type){
       ctx.closePath();
       ctx.fillStyle=GEMS[i].c; ctx.fill();
     }
-    ctx.beginPath(); ctx.arc(x,y,s*0.15,0,6.2832);
-    ctx.fillStyle="#F6F1E8"; ctx.fill();
+    ctx.restore();
+    ctx.beginPath(); ctx.arc(x,y,s*(0.13+nb*0.035),0,6.2832);
+    ctx.fillStyle="#FFFDF6"; ctx.fill();
   }
   ctx.restore();
 }
@@ -1913,7 +1987,17 @@ function gemCiz(g,t,zip){
   ctx.fillRect(x-boy,y-boy,boy*2,boy*0.42);
   ctx.restore();
 
-  if(g.power) gucCiz(ctx,g.power,x,y,boy,g.type);
+  if(g.power){
+    // güç taşının çevresinde yumuşak bir hâle — durduğu yerde de fark edilsin
+    const nb=0.5+0.5*Math.sin(t*3.6+g.id);
+    const R=boy*(0.62+nb*0.10);
+    const hg=ctx.createRadialGradient(x,y,boy*0.34,x,y,R);
+    hg.addColorStop(0,"rgba(255,247,228,"+(alpha*(0.20+nb*0.16))+")");
+    hg.addColorStop(1,"rgba(255,247,228,0)");
+    ctx.fillStyle=hg;
+    ctx.beginPath(); ctx.arc(x,y,R,0,6.2832); ctx.fill();
+    gucCiz(ctx,g.power,x,y,boy,g.type,t);
+  }
 
   if(g.flash>0.01){
     ctx.globalAlpha=alpha*g.flash*0.85;
@@ -1977,6 +2061,85 @@ function ciz(t,dt){
     return 0;
   };
 
+  // taşlar
+  const sonra=[];
+  for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){
+    const g=grid[r][c];
+    if(!g) continue;
+    if(g.durum==="clear") sonra.push(g); else gemCiz(g,t,zipMik(r,c));
+  }
+  for(const g of sonra) gemCiz(g,t,0);
+
+  // Enerji efektleri taşların üstünde: ışın, şok dalgası ve prizma
+  // ışınları taşların arkasında kalırsa okunmuyordu.
+  // ok güçlerinin şeridi
+  for(const I of isinlar){
+    const q=clamp(I.t/I.d,0,1);
+    const uzun=easeOutCubic(Math.min(1,q*1.9));
+    const kal=cell*(0.60*(1-q)+0.05);
+    ctx.save();
+    ctx.globalAlpha=(1-q)*0.92;
+    if(I.yon==="h"){
+      const y0=(I.r+.5)*cell, x0=(I.c+.5)*cell, yar=uzun*boardW;
+      const gr=ctx.createLinearGradient(x0-yar,0,x0+yar,0);
+      gr.addColorStop(0,"rgba(201,168,116,0)");
+      gr.addColorStop(.32,"rgba(201,168,116,.65)");
+      gr.addColorStop(.5,I.renk);
+      gr.addColorStop(.68,"rgba(201,168,116,.65)");
+      gr.addColorStop(1,"rgba(201,168,116,0)");
+      ctx.fillStyle=gr; ctx.fillRect(x0-yar,y0-kal/2,yar*2,kal);
+      ctx.globalAlpha=(1-q)*0.95;                 // ince parlak çekirdek
+      ctx.fillStyle="#FFFDF6"; ctx.fillRect(x0-yar,y0-kal*0.16,yar*2,kal*0.32);
+    }else{
+      const x0=(I.c+.5)*cell, y0=(I.r+.5)*cell, yar=uzun*boardH;
+      const gr=ctx.createLinearGradient(0,y0-yar,0,y0+yar);
+      gr.addColorStop(0,"rgba(201,168,116,0)");
+      gr.addColorStop(.32,"rgba(201,168,116,.65)");
+      gr.addColorStop(.5,I.renk);
+      gr.addColorStop(.68,"rgba(201,168,116,.65)");
+      gr.addColorStop(1,"rgba(201,168,116,0)");
+      ctx.fillStyle=gr; ctx.fillRect(x0-kal/2,y0-yar,kal,yar*2);
+      ctx.globalAlpha=(1-q)*0.95;
+      ctx.fillStyle="#FFFDF6"; ctx.fillRect(x0-kal*0.16,y0-yar,kal*0.32,yar*2);
+    }
+    ctx.restore();
+  }
+
+  // şok dalgaları
+  for(const S of soklar){
+    const q=clamp(S.t/S.d,0,1);
+    const R=easeOutCubic(q)*S.R*cell;
+    if(R<=1) continue;
+    const ic=Math.max(0,R-cell*1.05);
+    const gx=S.x*cell, gy=S.y*cell;
+    const gr=ctx.createRadialGradient(gx,gy,ic,gx,gy,R);
+    gr.addColorStop(0,"rgba("+S.renk+",0)");
+    gr.addColorStop(.45,"rgba("+S.renk+","+((1-q)*0.34)+")");
+    gr.addColorStop(.80,"rgba(255,253,246,"+((1-q)*0.72)+")");
+    gr.addColorStop(1,"rgba("+S.renk+",0)");
+    ctx.save(); ctx.fillStyle=gr;
+    ctx.beginPath(); ctx.arc(gx,gy,R,0,6.2832); ctx.fill(); ctx.restore();
+  }
+
+  // prizmadan hedeflere giden ışınlar
+  for(const Y of sualar){
+    const q=clamp(Y.t/Y.d,0,1);
+    const uc=easeOutCubic(Math.min(1,q*2.3));
+    const x1=Y.x1*cell, y1=Y.y1*cell;
+    const x2=x1+(Y.x2*cell-x1)*uc, y2=y1+(Y.y2*cell-y1)*uc;
+    ctx.save();
+    ctx.lineCap="round";
+    ctx.globalAlpha=(1-q)*0.85;
+    ctx.strokeStyle=Y.renk; ctx.lineWidth=cell*0.16*(1-q*0.5);
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+    ctx.globalAlpha=(1-q)*0.95;                   // ışığın çekirdeği
+    ctx.strokeStyle="#FFFDF6"; ctx.lineWidth=cell*0.06*(1-q*0.5);
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+    ctx.beginPath(); ctx.arc(x2,y2,cell*0.13*(1-q),0,6.2832);
+    ctx.fillStyle="#FFFDF6"; ctx.fill();
+    ctx.restore();
+  }
+
   // halkalar
   for(const R of rings){
     const p=clamp(R.t/0.55,0,1);
@@ -1989,14 +2152,6 @@ function ciz(t,dt){
     ctx.stroke(); ctx.restore();
   }
 
-  // taşlar
-  const sonra=[];
-  for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){
-    const g=grid[r][c];
-    if(!g) continue;
-    if(g.durum==="clear") sonra.push(g); else gemCiz(g,t,zipMik(r,c));
-  }
-  for(const g of sonra) gemCiz(g,t,0);
 
   // zerreler
   for(const p of parts){
@@ -2034,6 +2189,14 @@ function ciz(t,dt){
   }
 
   ctx.restore();
+
+  if(flash>0.004){                      // sarsıntıdan bağımsız, tüm tahtayı örter
+    ctx.save();
+    ctx.globalAlpha=Math.min(0.55,flash*0.55);
+    ctx.fillStyle="#FFF8EA";
+    ctx.fillRect(0,0,boardW,boardH);
+    ctx.restore();
+  }
 }
 
 /* ============================ döngü ============================ */
@@ -2043,6 +2206,10 @@ function dongu(now){
   let dt=(now-son)/1000; son=now;
   dt=Math.min(dt,0.05);
   zaman+=dt;
+
+  // Darbe duraklaması: taşlar bir an yavaşlar, efektler tam hızda akar.
+  let dtT=dt;
+  if(donma>0){ donma=Math.max(0,donma-dt); dtT=dt*0.14; }
 
   // sarsıntı
   if(shake>0.05){
@@ -2054,12 +2221,13 @@ function dongu(now){
   for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){
     const g=grid[r][c];
     if(!g) continue;
-    g.flash=Math.max(0,g.flash-dt*4.2);
-    if(g.dogum<1){ g.dogum=Math.min(1,g.dogum+dt*3.4); g.scale=0.6+easeOutBack(g.dogum)*0.4; }
-    else if(g.durum!=="clear"&&!bas) g.scale+=(1-g.scale)*Math.min(1,dt*12);
+    const dt2=dtT;
+    g.flash=Math.max(0,g.flash-dt2*4.2);
+    if(g.dogum<1){ g.dogum=Math.min(1,g.dogum+dt2*3.4); g.scale=0.6+easeOutBack(g.dogum)*0.4; }
+    else if(g.durum!=="clear"&&!bas) g.scale+=(1-g.scale)*Math.min(1,dt2*12);
 
     if(g.tw){
-      g.tw.t+=dt;
+      g.tw.t+=dt2;
       const p=clamp(g.tw.t/g.tw.d,0,1);
       const e=easeOutCubic(p);
       g.px=lerp(g.tw.fx,g.tw.tx,e);
@@ -2067,8 +2235,8 @@ function dongu(now){
       if(p>=1){ g.px=g.tw.tx; g.py=g.tw.ty; g.tw=null; }
     }else{
       if(g.py<g.r-0.001){
-        g.vy+=42*dt;
-        g.py+=g.vy*dt;
+        g.vy+=42*dt2;
+        g.py+=g.vy*dt2;
         if(g.py>=g.r){
           const vur=Math.min(g.vy,17);
           g.py=g.r; g.vy=0;
@@ -2076,16 +2244,16 @@ function dongu(now){
           if(vur>6&&!REDUCED) zerre(g.c,g.r,GEMS[g.type].d,1);
         }
       }else if(Math.abs(g.py-g.r)>0.001){
-        g.py+=(g.r-g.py)*Math.min(1,dt*18);
+        g.py+=(g.r-g.py)*Math.min(1,dt2*18);
       }
-      if(Math.abs(g.px-g.c)>0.001) g.px+=(g.c-g.px)*Math.min(1,dt*18);
+      if(Math.abs(g.px-g.c)>0.001) g.px+=(g.c-g.px)*Math.min(1,dt2*18);
     }
-    g.sx+=(1-g.sx)*Math.min(1,dt*11);
-    g.sy+=(1-g.sy)*Math.min(1,dt*11);
+    g.sx+=(1-g.sx)*Math.min(1,dt2*11);
+    g.sy+=(1-g.sy)*Math.min(1,dt2*11);
 
     if(g.durum==="clear"){
       const onceki=g.t;
-      g.t+=dt;
+      g.t+=dt2;
       if(onceki<0&&g.t>=0){
         zerre(g.c,g.r,GEMS[g.type].c,7);
       }
@@ -2098,6 +2266,10 @@ function dongu(now){
     p.x+=p.vx*dt; p.y+=p.vy*dt; p.rot+=p.vr*dt;
     if(p.t>=p.d) parts.splice(i,1);
   }
+  for(let i=isinlar.length-1;i>=0;i--){ isinlar[i].t+=dt; if(isinlar[i].t>isinlar[i].d) isinlar.splice(i,1); }
+  for(let i=soklar.length-1;i>=0;i--){ soklar[i].t+=dt; if(soklar[i].t>soklar[i].d) soklar.splice(i,1); }
+  for(let i=sualar.length-1;i>=0;i--){ sualar[i].t+=dt; if(sualar[i].t>sualar[i].d) sualar.splice(i,1); }
+  flash=Math.max(0,flash-dt*3.4);
   for(let i=rings.length-1;i>=0;i--){ rings[i].t+=dt; if(rings[i].t>0.55) rings.splice(i,1); }
   for(let i=floats.length-1;i>=0;i--){ floats[i].t+=dt; if(floats[i].t>1.0) floats.splice(i,1); }
 
@@ -2234,7 +2406,8 @@ function gucluHucreler(){
   return out;
 }
 async function gucleriAtesle(guclu){
-  const {temiz}=zincirGenislet(guclu,null);
+  const {temiz,etki}=zincirGenislet(guclu,null);
+  gucEfekti(etki);
   const liste=[...temiz];
   if(!liste.length) return false;
   puanEkle(liste.length*80,cols/2-0.5,rows/2-0.5,2);
