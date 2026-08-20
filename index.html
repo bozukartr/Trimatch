@@ -21,6 +21,9 @@
     --akis:cubic-bezier(.22,1,.36,1);
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  /* .btn display:block ve .tally/.stars display:flex kuralları hidden
+     özniteliğini eziyordu; gizli bölümler ekranda kalıyordu. */
+  [hidden]{display:none !important;}
   html,body{height:100%;margin:0;overflow:hidden;overscroll-behavior:none;}
   body{
     background:var(--bg);
@@ -260,10 +263,55 @@
   .linkrow{display:flex;gap:4px;margin-top:2px;}
   .linkrow .btn{margin-top:0;}
 
-  .tally{display:flex;gap:8px;margin-top:16px;}
-  .tally div{flex:1;background:var(--surface-2);border-radius:14px;padding:10px 11px;}
-  .tally .k{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);font-weight:700;}
-  .tally .v{font-size:19px;font-weight:780;margin-top:2px;}
+  /* ---------- bölüm kağıdı ---------- */
+  .bolge-cip{
+    display:inline-flex;align-items:center;gap:7px;margin-bottom:9px;
+    background:var(--surface-2);border-radius:99px;padding:5px 11px 5px 8px;
+  }
+  .bolge-cip i{width:9px;height:9px;border-radius:50%;flex:0 0 auto;
+               box-shadow:inset 0 -2px 0 rgba(0,0,0,.16);}
+  .bolge-cip span{font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+                  font-weight:750;color:var(--dim);}
+
+  /* girişte hedefi anlatan kahraman kart */
+  .hedef-kart{
+    display:flex;align-items:center;gap:13px;margin-top:15px;
+    background:var(--surface-2);border-radius:18px;padding:14px 15px;
+  }
+  .hedef-kart canvas{flex:0 0 auto;display:block;}
+  .hk-m{min-width:0;}
+  .hk-b{font-size:31px;font-weight:800;letter-spacing:-.035em;line-height:1;}
+  .hk-a{font-size:13px;font-weight:640;color:var(--dim);margin-top:4px;line-height:1.3;}
+
+  .cipler{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px;}
+  .cip{
+    display:inline-flex;align-items:center;gap:6px;
+    background:var(--surface-2);border:1px solid var(--line);border-radius:11px;
+    padding:7px 11px;font-size:12px;font-weight:700;color:var(--ink);
+  }
+  .cip em{font-style:normal;color:var(--dim);font-weight:650;}
+  .cip .y{letter-spacing:.08em;color:var(--line);font-size:11px;}
+  .cip .y b{color:#C29A55;font-weight:400;}
+
+  /* bitişte sonuç bloğu — puan başrolde */
+  .sonuc{margin-top:16px;}
+  .sonuc-ana{
+    position:relative;background:var(--surface-2);border-radius:18px;
+    padding:14px 15px 15px;text-align:center;
+  }
+  .sonuc-ana .k{font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;
+                color:var(--dim);font-weight:700;}
+  .sonuc-ana .v{font-size:38px;font-weight:800;letter-spacing:-.04em;line-height:1.05;margin-top:3px;}
+  .rozet{
+    display:inline-block;margin-top:8px;background:#C29A55;color:#FFF8EA;
+    border-radius:9px;padding:4px 9px;font-size:9.5px;letter-spacing:.14em;
+    text-transform:uppercase;font-weight:780;
+  }
+  .sonuc-yan{display:flex;gap:8px;margin-top:8px;}
+  .sonuc-yan .kutu{flex:1;background:var(--surface-2);border-radius:14px;padding:11px;min-width:0;text-align:center;}
+  .sonuc-yan .k{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);font-weight:700;}
+  .sonuc-yan .v{font-size:19px;font-weight:780;margin-top:2px;}
+  .sonuc-yan .kutu.altin .v{color:var(--accent);}
 
   .rules{margin:14px 0 0;padding:0;list-style:none;overflow:auto;}
   .rules li{display:flex;gap:11px;align-items:flex-start;padding:9px 0;border-top:1px solid var(--line);}
@@ -274,8 +322,13 @@
   .rules .d{font-size:12.5px;color:var(--dim);line-height:1.4;margin-top:2px;font-weight:550;}
 
   /* yıldızlar */
-  .stars{display:flex;justify-content:center;gap:10px;margin:18px 0 2px;}
-  .stars svg{width:46px;height:46px;fill:#DFD4C1;opacity:0;transform:scale(.4) rotate(-25deg);}
+  .stars{
+    display:flex;justify-content:center;align-items:center;gap:6px;margin:16px 0 2px;
+    padding:12px 0;border-radius:20px;
+    background:radial-gradient(ellipse 62% 78% at 50% 50%, rgba(194,154,85,.16), rgba(194,154,85,0) 70%);
+  }
+  .stars svg{width:50px;height:50px;fill:#DFD4C1;opacity:0;transform:scale(.4) rotate(-25deg);}
+  .stars svg:nth-child(2){width:60px;height:60px;}
   .stars svg.on{animation:pop .46s cubic-bezier(.22,1.4,.4,1) forwards;}
   .stars svg.kazanildi{fill:#C29A55;}
   @keyframes pop{
@@ -346,29 +399,36 @@
   .rok{font-size:13px;color:var(--dim);flex:0 0 auto;transition:transform .22s;width:14px;text-align:center;}
   .region.acik .rok{transform:rotate(180deg);}
 
-  .region-body{position:relative;padding:8px 0 4px 0;}
-  .region-body::before{
-    content:"";position:absolute;left:21px;top:0;bottom:14px;width:0;
-    border-left:2px dotted var(--line);
-  }
+  .region-body{position:relative;padding:6px 0 4px 0;}
   .node{
     position:relative;display:flex;align-items:stretch;gap:10px;width:100%;
-    background:none;border:0;padding:4px 0;font-family:inherit;color:inherit;
+    background:none;border:0;padding:5px 0;font-family:inherit;color:inherit;
     cursor:pointer;text-align:left;
   }
+  /* bağlantı çizgisi düğüm başına: tamamlananlar koyu, kilitliler soluk */
+  .node::before{
+    content:"";position:absolute;left:23px;top:0;bottom:0;width:2px;
+    background:var(--line);border-radius:2px;
+  }
+  .node:first-of-type::before{top:26px;}
+  .node:last-of-type::before{bottom:calc(100% - 26px);}
+  .node.bitti::before{background:#D9C7A4;}
+  .node.kilitli::before{opacity:.4;}
   .node.kilitli{cursor:default;}
   .node:focus-visible{outline:2px solid var(--accent);outline-offset:1px;border-radius:16px;}
-  .rail{flex:0 0 44px;display:flex;justify-content:center;align-items:flex-start;padding-top:6px;}
+  .rail{flex:0 0 48px;display:flex;justify-content:center;align-items:flex-start;padding-top:5px;position:relative;}
   .disc{
-    width:34px;height:34px;border-radius:12px;display:grid;place-items:center;
-    font-size:13.5px;font-weight:780;border:1px solid var(--line);background:var(--surface);
+    width:38px;height:38px;border-radius:13px;display:grid;place-items:center;
+    font-size:15px;font-weight:800;letter-spacing:-.02em;
+    border:1px solid var(--line);background:var(--surface);
     color:var(--dim);transition:transform .14s cubic-bezier(.34,1.56,.64,1);
   }
   .ncard{transition:transform .16s var(--yay),border-color .2s,box-shadow .2s;}
   .node:active .disc{transform:scale(.88);}
   .node:not(.kilitli):active .ncard{transform:scale(.985);}
   .node.bitti .disc{background:#EADFC8;border-color:#D9C7A4;color:#7A6A4C;}
-  .node.simdi .disc{background:var(--ink);border-color:var(--ink);color:#F6F1E8;box-shadow:0 0 0 4px rgba(59,53,44,.12);}
+  .node.simdi .disc{background:var(--ink);border-color:var(--ink);color:#F6F1E8;
+                    box-shadow:0 0 0 5px rgba(59,53,44,.10),0 0 0 1px rgba(59,53,44,.35);}
   .node.kilitli .disc{opacity:.45;}
   .ncard{
     flex:1;min-width:0;background:var(--surface);border:1px solid var(--line);
@@ -382,8 +442,15 @@
     font-size:9px;letter-spacing:.14em;text-transform:uppercase;font-weight:750;
     background:var(--ink);color:#F6F1E8;border-radius:7px;padding:3px 6px;flex:0 0 auto;
   }
-  .nyld{font-size:11.5px;letter-spacing:.1em;color:var(--line);flex:0 0 auto;}
+  .nyld{font-size:13px;letter-spacing:.12em;color:var(--line);flex:0 0 auto;line-height:1;}
   .nyld .dolu{color:#C29A55;}
+  /* kilitli bölümlerin başladığı yeri işaretleyen ince ayırıcı */
+  .kilit-not{
+    display:flex;align-items:center;gap:10px;margin:12px 0 8px 48px;
+    font-size:10px;font-weight:750;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--dim);opacity:.75;
+  }
+  .kilit-not::after{content:"";flex:1;height:1px;background:var(--line);}
   .nalt{display:flex;align-items:center;gap:7px;margin-top:6px;}
   .nico{flex:0 0 auto;display:block;}
   .ntxt{font-size:12px;font-weight:620;color:var(--ink);min-width:0;
@@ -536,14 +603,30 @@
   <!-- bölüm girişi / kazandı / kaybetti -->
   <div class="veil" id="veil">
     <div class="sheet">
+      <div class="bolge-cip" id="vRegion" hidden><i></i><span></span></div>
       <h2 id="vTitle">Bölüm 1</h2>
       <p class="sub" id="vSub">Hedef</p>
       <div class="stars" id="vStars" hidden></div>
-      <div class="tally" id="vTally" hidden>
-        <div><div class="k">Puan</div><div class="v" id="vScore">0</div></div>
-        <div><div class="k">Kalan hamle</div><div class="v" id="vMoves">0</div></div>
-        <div id="vGoldBox" hidden><div class="k">Altın</div><div class="v alt" id="vGold">0</div></div>
+
+      <div class="hedef-kart" id="vHero" hidden>
+        <canvas id="vHeroIk" aria-hidden="true"></canvas>
+        <div class="hk-m">
+          <div class="hk-b" id="vHeroBig">0</div>
+          <div class="hk-a" id="vHeroAlt">hedef</div>
+        </div>
       </div>
+
+      <div class="cipler" id="vChips" hidden></div>
+
+      <div class="sonuc" id="vTally" hidden>
+        <div class="sonuc-ana">
+          <div class="k">Puan</div>
+          <div class="v" id="vScore">0</div>
+          <div class="rozet" id="vRecord" hidden>Yeni rekor</div>
+        </div>
+        <div class="sonuc-yan" id="vSide"></div>
+      </div>
+
       <button class="btn" id="vPrimary">Başla</button>
       <button class="btn ghost" id="vSecondary" hidden>Baştan başla</button>
       <div class="linkrow">
@@ -833,10 +916,11 @@ function bolumUret(n){
 
 function hedefMetni(L){
   const h=L.hedef;
-  if(h.tip==="skor") return { html:`<b>${fmt(h.miktar)}</b> puan topla`, renk:"#B08D57" };
-  if(h.tip==="renk") return { html:`<b>${h.miktar}</b> ${GEMS[h.renk].ad} taşı topla`, renk:GEMS[h.renk].c };
-  if(h.tip==="kum")  return { html:`<b>${h.miktar}</b> kum karo temizle`, renk:SAND2 };
-  return { html:`<b>${h.miktar}</b> özel taş üret`, renk:INK };
+  const y=(sayi,ad,renk)=>({ html:`<b>${sayi}</b> ${ad}`, sayi, ad, renk });
+  if(h.tip==="skor") return y(fmt(h.miktar),"puan topla","#B08D57");
+  if(h.tip==="renk") return y(h.miktar,GEMS[h.renk].ad+" taşı topla",GEMS[h.renk].c);
+  if(h.tip==="kum")  return y(h.miktar,"kum karo temizle",SAND2);
+  return y(h.miktar,"özel taş üret",INK);
 }
 
 /* ============================ bölgeler ============================ */
@@ -2465,9 +2549,14 @@ async function kazandi(){
   const yeniBolge = bolgeNo(bolumNo)!==bolgeNo(L.n);
   const buBolum=L.n;
   ekranGoster({
-    baslik:"Bölüm tamam",
+    bolge:bolgeBilgi(bolgeNo(buBolum)),
+    baslik:"Bölüm "+buBolum+" tamam",
     alt:yildizNotu(yildiz)+(yeniBolge?" Yeni bölge açıldı: "+bolgeBilgi(bolgeNo(bolumNo)).ad+".":""),
-    tally:true, yildiz, altin:odul,
+    tally:true, yildiz,
+    rekor:!onceki||puan>onceki[1],
+    // Kazanma bonusu kalan hamleleri harcadığı için burada hedefe
+    // varıldığı andaki sayı gösteriliyor; yıldızı belirleyen de o.
+    yanlar:[{k:"Kalan hamle",v:hamleHedefte},{k:"Altın",v:"+"+fmt(odul),altin:true}],
     birincil:"Bölüm "+bolumNo+"’e geç",
     ikincil: yildiz<3 ? "Bu bölümü tekrar oyna" : null, ikincilKapatma:true,
     onBirincil:()=>bolumBaslat(bolumNo),
@@ -2515,12 +2604,18 @@ async function kaybetti(){
   await wait(280);
   const n=L.n;
   const devamVar=devamKalan>0;
+  const h=L.hedef;
+  const su=h.tip==="skor"?puan:ilerleme;
+  const eksik=Math.max(0,h.miktar-su);
   ekranGoster({
+    bolge:bolgeBilgi(bolgeNo(n)),
     baslik:"Hamleler bitti",
     alt: devamVar
       ? "Hedefe az kaldı. Aynı tahtadan "+EK_HAMLE+" hamleyle sürdürebilirsin; bu bölümden en çok iki yıldız çıkar."
       : "Hedefe ulaşmak için birkaç hamle eksik kaldı. Tahta yeniden kurulacak.",
     tally:true,
+    yanlar:[{k:"Hedefe kalan",v:h.tip==="skor"?fmt(eksik):eksik},
+            {k:"Tamamlanan",v:"%"+Math.round(clamp(su/h.miktar*100,0,100))}],
     birincil: devamVar ? EK_HAMLE+" hamle ekle" : "Tekrar dene",
     ikincil: devamVar ? "Tekrar dene" : null, ikincilKapatma:true,
     onBirincil:()=>{ if(devamVar) devamEt(); else bolumBaslat(n); },
@@ -2547,16 +2642,62 @@ function yildizCiz(kutu,adet){
 }
 
 function ekranGoster(o){
+  // bölge kimliği
+  const bc=el("vRegion");
+  if(o.bolge){
+    bc.hidden=false;
+    bc.querySelector("i").style.background=o.bolge.renk;
+    bc.querySelector("span").textContent=o.bolge.ad;
+  } else bc.hidden=true;
+
   el("vTitle").textContent=o.baslik;
-  el("vSub").textContent=o.alt;
+  const alt=el("vSub");
+  alt.hidden=!o.alt; alt.textContent=o.alt||"";
+
   const yl=el("vStars");
   if(o.yildiz){ yl.hidden=false; yildizCiz(yl,o.yildiz); } else { yl.hidden=true; yl.innerHTML=""; }
+
+  // girişte hedef kartı
+  const hk=el("vHero");
+  if(o.hedef){
+    hk.hidden=false;
+    hedefIkonCiz(el("vHeroIk"),o.hedef.L,42);
+    el("vHeroBig").textContent=o.hedef.sayi;
+    el("vHeroAlt").textContent=o.hedef.ad;
+  } else hk.hidden=true;
+
+  // girişte bilgi çipleri
+  const ck=el("vChips");
+  ck.innerHTML="";
+  ck.hidden=!(o.cipler&&o.cipler.length);
+  if(o.cipler) for(const c of o.cipler){
+    const d=document.createElement("span");
+    d.className="cip";
+    if(c.yildiz!==undefined){
+      const y=document.createElement("span");
+      y.className="y"; y.innerHTML="★★★".slice(0,c.yildiz).replace(/★/g,"<b>★</b>")+"★★★".slice(c.yildiz);
+      d.appendChild(y);
+    }
+    const t=document.createElement("span");
+    t.innerHTML=c.ad;
+    d.appendChild(t);
+    ck.appendChild(d);
+  }
+
+  // bitişte sonuç bloğu
   el("vTally").hidden=!o.tally;
   el("vScore").textContent=fmt(puan);
-  el("vMoves").textContent=hamle;
-  const gk=el("vGoldBox");
-  if(o.altin){ gk.hidden=false; el("vGold").textContent="+"+fmt(o.altin); }
-  else gk.hidden=true;
+  el("vRecord").hidden=!o.rekor;
+  const yan=el("vSide");
+  yan.innerHTML="";
+  if(o.yanlar) for(const k of o.yanlar){
+    const d=document.createElement("div");
+    d.className="kutu"+(k.altin?" altin":"");
+    d.innerHTML='<div class="k"></div><div class="v"></div>';
+    d.querySelector(".k").textContent=k.k;
+    d.querySelector(".v").textContent=k.v;
+    yan.appendChild(d);
+  }
 
   const b=el("vPrimary"); b.textContent=o.birincil;
   b.onclick=()=>{ veilKapat(); o.onBirincil(); };
@@ -2626,8 +2767,7 @@ function haritaDugum(n,acik,sk,gecikme){
   }
 
   b.querySelector(".nfoot").textContent =
-    kilitli ? "Önceki bölümü bitirince açılır"
-            : LN.hamle+" hamle" + (kayit ? " · En iyi "+fmt(kayit[1]) : "");
+    LN.hamle+" hamle" + (kayit ? " · En iyi "+fmt(kayit[1]) : "");
 
   if(gecikme>=0){ b.classList.add("gir"); b.style.animationDelay=gecikme.toFixed(3)+"s"; }
 
@@ -2690,8 +2830,16 @@ function haritaCiz(){
     if(acikMi){
       const govde=document.createElement("div");
       govde.className="region-body";
-      for(let n=B.ilk;n<=B.son;n++)
+      for(let n=B.ilk;n<=B.son;n++){
+        // kilit açıklaması her satırda tekrar etmesin; bir kez, sınırda yazılsın
+        if(n===acik+1 && n>=B.ilk && n<=B.son){
+          const not=document.createElement("div");
+          not.className="kilit-not";
+          not.textContent="Kilitli";
+          govde.appendChild(not);
+        }
         govde.appendChild(haritaDugum(n,acik,sk, bn===sonAcilanBolge ? (n-B.ilk)*0.022 : -1));
+      }
       bolum.appendChild(govde);
     }
     road.appendChild(bolum);
@@ -2808,10 +2956,14 @@ function bolumBaslat(n,sessiz){
   const m=hedefMetni(L);
   const dz=["Rahat bir başlangıç","Isınma turu","Dikkat isteyen bir tahta","Sıkı bir bölüm","Ustalık ister"][Math.min(4,Math.floor((n-1)/6))];
   const kayit=(Save.mem.sk||{})[n];
+  const cipler=[{ad:"<em>Hamle</em> "+L.hamle}];
+  if(kayit) cipler.push({yildiz:kayit[0], ad:"<em>En iyi</em> "+fmt(kayit[1])});
   ekranGoster({
+    bolge:bolgeBilgi(bolgeNo(n)),
     baslik:"Bölüm "+n,
-    alt:bolgeBilgi(bolgeNo(n)).ad+" · "+duzMetin(m.html)+" · "+L.hamle+" hamle. "+
-        (kayit?"En iyin "+fmt(kayit[1])+" puan, "+kayit[0]+" yıldız.":dz+"."),
+    alt:kayit?"Daha az hamlede bitirirsen yıldızın artar.":dz+".",
+    hedef:{L, sayi:m.sayi, ad:m.ad},
+    cipler,
     tally:false, birincil:"Başla",
     onBirincil:()=>{ durum="oyna"; ipucuSifirla(); }
   });
