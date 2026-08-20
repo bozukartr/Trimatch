@@ -87,8 +87,23 @@
               white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .stat .mini{position:relative;height:5px;margin-top:6px;border-radius:99px;background:var(--surface-2);
               overflow:hidden;border:1px solid rgba(0,0,0,.04);}
-  .esik{position:absolute;top:0;bottom:0;width:2px;margin-left:-1px;
-        background:rgba(59,53,44,.30);border-radius:2px;}
+  /* ---------- görev şeridi ---------- */
+  .gorevler{display:flex;gap:7px;margin-top:8px;}
+  .gorev{
+    flex:1;min-width:0;display:flex;align-items:center;gap:8px;
+    background:var(--surface);border:1px solid var(--line);border-radius:14px;
+    padding:7px 10px;transition:border-color .25s,background .25s;
+  }
+  .gorev canvas{flex:0 0 auto;display:block;}
+  .gorev .gm{flex:1;min-width:0;}
+  .gorev .gt{display:block;font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+             color:var(--dim);font-weight:700;white-space:nowrap;
+             overflow:hidden;text-overflow:ellipsis;}
+  .gorev .gs{display:block;font-size:13.5px;font-weight:780;letter-spacing:-.01em;margin-top:1px;}
+  .gorev .gy{font-size:13px;color:var(--line);flex:0 0 auto;transition:color .3s,transform .3s var(--yay);}
+  .gorev.tamam{border-color:#C2A164;background:#F3EDDF;}
+  .gorev.tamam .gy{color:#C29A55;transform:scale(1.18);}
+  .gorev.tamam .gs{color:var(--accent);}
   .stat .mini i{display:block;height:100%;width:100%;border-radius:99px;background:var(--ink);
                 transition:width .3s cubic-bezier(.22,1,.36,1);}
   .stat{transition:border-color .25s,transform .2s var(--yay);}
@@ -146,8 +161,8 @@
 
   /* ---------- güç şeridi ---------- */
   .gucbar{
-    height:42px;margin-top:8px;flex:0 0 auto;
-    display:flex;align-items:stretch;gap:5px;
+    margin-top:8px;flex:0 0 auto;
+    display:flex;align-items:stretch;gap:4px;min-height:42px;
   }
   .altin,.bst,.gucbar .hintbtn{
     border:1px solid var(--line);background:var(--surface);color:var(--dim);
@@ -156,11 +171,12 @@
   }
   .altin:active,.bst:active,.gucbar .hintbtn:active{transform:scale(.92);background:var(--surface-2);}
   .altin:focus-visible,.bst:focus-visible,.gucbar .hintbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
-  .altin{display:flex;align-items:center;gap:5px;padding:0 10px 0 8px;}
+  .altin{display:flex;align-items:center;gap:4px;padding:0 8px 0 7px;}
   .altin b{font-size:13px;font-weight:780;color:var(--ink);letter-spacing:-.01em;}
   .altin.artti{animation:nabiz .5s var(--yay);}
   .altin-ik{display:block;flex:0 0 auto;}
-  .bst{width:46px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:0;}
+  .bst{flex:1 1 0;min-width:36px;max-width:52px;display:flex;flex-direction:column;
+       align-items:center;justify-content:center;gap:1px;padding:0;}
   .bst canvas{display:block;}
   .bst .sy{font-size:10px;font-weight:780;letter-spacing:.02em;color:var(--ink);}
   .bst.etkin{background:var(--ink);border-color:var(--ink);}
@@ -168,8 +184,8 @@
   .bst.bos{opacity:.45;}
   .bst.bos .sy{color:var(--dim);}
   .gucbar .hintbtn{
-    margin-left:auto;display:flex;align-items:center;padding:0 12px;
-    font-size:11.5px;font-weight:700;letter-spacing:.06em;
+    margin-left:2px;display:flex;align-items:center;padding:0 9px;flex:0 0 auto;
+    font-size:11px;font-weight:700;letter-spacing:.04em;
   }
   .gucbar .hintbtn[disabled],.bst[disabled]{opacity:.32;cursor:default;}
 
@@ -283,6 +299,21 @@
   .hk-b{font-size:31px;font-weight:800;letter-spacing:-.035em;line-height:1;}
   .hk-a{font-size:13px;font-weight:640;color:var(--dim);margin-top:4px;line-height:1.3;}
 
+  .gorev-liste{margin-top:11px;}
+  .gorev-satir{
+    display:flex;align-items:center;gap:10px;margin-top:7px;
+    background:var(--surface-2);border-radius:14px;padding:9px 11px;
+  }
+  .gorev-satir:first-child{margin-top:0;}
+  .gorev-satir canvas{flex:0 0 auto;display:block;}
+  .gorev-satir .gs{flex:1;min-width:0;font-size:12.5px;font-weight:650;line-height:1.35;}
+  .gorev-satir .gy{font-size:13px;color:#C29A55;flex:0 0 auto;}
+  .gorev-basi{font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+              color:var(--dim);font-weight:750;margin:14px 0 6px;}
+  .ders{
+    margin:12px 0 0;background:#F1E7D2;border:1px dashed #C2A164;border-radius:14px;
+    padding:11px 13px;font-size:12.5px;line-height:1.5;font-weight:600;color:var(--ink);
+  }
   .cipler{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px;}
   .cip{
     display:inline-flex;align-items:center;gap:6px;
@@ -312,6 +343,7 @@
   .sonuc-yan .k{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);font-weight:700;}
   .sonuc-yan .v{font-size:19px;font-weight:780;margin-top:2px;}
   .sonuc-yan .kutu.altin .v{color:var(--accent);}
+  .odeme-not{margin:9px 2px 0;font-size:11px;line-height:1.45;color:var(--dim);font-weight:600;}
 
   .rules{margin:14px 0 0;padding:0;list-style:none;overflow:auto;}
   .rules li{display:flex;gap:11px;align-items:flex-start;padding:9px 0;border-top:1px solid var(--line);}
@@ -533,11 +565,7 @@
         </span>
       </div>
       <div class="v" id="movesV">0</div>
-      <div class="mini">
-        <i id="movesBar"></i>
-        <span class="esik" id="esik3"></span>
-        <span class="esik" id="esik2"></span>
-      </div>
+      <div class="mini"><i id="movesBar"></i></div>
     </div>
     <div class="stat" id="cardScore">
       <div class="k">Puan</div>
@@ -557,6 +585,8 @@
     </div>
   </div>
 
+  <div class="gorevler" id="gorevler"></div>
+
   <div class="stage">
     <div class="boardwrap">
       <canvas id="board"></canvas>
@@ -568,6 +598,8 @@
         <button class="bst" id="bst-takas"><canvas aria-hidden="true"></canvas><span class="sy"></span></button>
         <button class="bst" id="bst-patlat"><canvas aria-hidden="true"></canvas><span class="sy"></span></button>
         <button class="bst" id="bst-prizma"><canvas aria-hidden="true"></canvas><span class="sy"></span></button>
+        <button class="bst" id="bst-karistir"><canvas aria-hidden="true"></canvas><span class="sy"></span></button>
+        <button class="bst" id="bst-kazma"><canvas aria-hidden="true"></canvas><span class="sy"></span></button>
         <button class="hintbtn" id="btnHint" aria-label="İpucu göster">İpucu</button>
       </div>
     </div>
@@ -616,7 +648,9 @@
         </div>
       </div>
 
+      <div class="gorev-liste" id="vGorevler" hidden></div>
       <div class="cipler" id="vChips" hidden></div>
+      <p class="ders" id="vDers" hidden></p>
 
       <div class="sonuc" id="vTally" hidden>
         <div class="sonuc-ana">
@@ -625,6 +659,7 @@
           <div class="rozet" id="vRecord" hidden>Yeni rekor</div>
         </div>
         <div class="sonuc-yan" id="vSide"></div>
+        <p class="odeme-not" id="vOdemeNot" hidden></p>
       </div>
 
       <button class="btn" id="vPrimary">Başla</button>
@@ -722,15 +757,27 @@ const BST = {
   patlat: { ad:"Patlat",       fiyat:80,
             aciklama:"Seçtiğin tek taşı tahtadan kaldırır. Özel taşa dokunursan gücü açılır." },
   prizma: { ad:"Prizma",       fiyat:150,
-            aciklama:"Rastgele bir taşı prizmaya çevirir. Bölüm hedefi olan özel taş sayısına eklenmez." }
+            aciklama:"Rastgele bir taşı prizmaya çevirir. Görev sayacına eklenmez." },
+  karistir:{ ad:"Karıştır",     fiyat:70,
+            aciklama:"Tahtadaki taşların yerini değiştirir. Hamle kalmadığında değil, iyi hamle kalmadığında işe yarar." },
+  kazma:   { ad:"Kazma",        fiyat:110,
+            aciklama:"Dokunduğun taşın çevresindeki 3×3 alanı temizler." }
 };
 
 // Güçler yalnızca oyunda kazanılan altınla alınır ve depoda birikir.
-const BASLANGIC_ENV = { takas:1, patlat:1, prizma:0 };
+const BASLANGIC_ENV = { takas:1, patlat:1, prizma:0, karistir:1, kazma:0 };
 
 // Bölüm sonu kazancı: taban + yıldız başına, ilk bitirişte ek kese.
 const ODUL_TABAN=20, ODUL_YILDIZ=20, ODUL_ILK=40;
-const altinOdul = (yildiz,ilkKez)=> ODUL_TABAN + ODUL_YILDIZ*yildiz + (ilkKez?ODUL_ILK:0);
+
+// İlk bitirişte taban + yıldız başına + ilk geçiş kesesi ödenir.
+// Tekrar oynayışta yalnızca YILDIZ ARTIŞI ödenir: iki yıldızdan üçe
+// çıkmak bir yıldızlık ödeme getirir, üç yıldızlı bölümü tekrar
+// oynamak hiçbir şey getirmez — sadece rekoru geliştirir.
+function altinOdul(yildiz,oncekiYildiz){
+  if(oncekiYildiz<=0) return ODUL_TABAN + ODUL_YILDIZ*yildiz + ODUL_ILK;
+  return Math.max(0,yildiz-oncekiYildiz) * ODUL_YILDIZ;
+}
 
 const P_ROW="row", P_COL="col", P_BOMB="bomb", P_PRISM="prism";
 
@@ -832,96 +879,192 @@ const Save = {
 
 /* ============================ bölüm üretici ============================ */
 
-const HEDEF_TIPLERI=["skor","renk","kum","guc"];
+/* ---------------- görev havuzu ----------------
+   Her bölümün asıl hedefi puan. Yıldızlar ve ek ödeme, üstüne binen iki
+   görevden geliyor: bitirmek 1 yıldız, her tamamlanan görev bir yıldız
+   daha. Görevler sayaçlardan okunuyor (bkz. sayacSifirla).                */
+
+const GOREV_TIPLERI=["renk","kum","guc","prizma","zincir","kombo","tekSeferde","tasarruf"];
+
+function gorevMiktar(tip,hamle,zorluk,n,zor){
+  const k = zor ? 1.0 : 0.6;
+  switch(tip){
+    case "renk":       return Math.max(8, Math.round(hamle*1.9*zorluk*k));
+    case "kum":        return Math.max(4, Math.round(hamle*0.5*zorluk*k));
+    case "guc":        return Math.max(2, Math.round(hamle*0.15*zorluk*k));
+    case "prizma":     return Math.max(1, Math.round(hamle*0.045*zorluk*k));
+    case "zincir":     return zor?4:3;
+    case "kombo":      return zor?2:1;
+    case "tekSeferde": return Math.max(8, Math.round((zor?15:10)*(0.85+zorluk*0.3)));
+    case "tasarruf":   return Math.max(2, Math.round(hamle*(zor?0.30:0.18)));
+  }
+  return 1;
+}
+
+// Öğretici bölümler elde tasarlandı: tek bir şey öğretir, tahtası sakindir.
+const OGRETICI = {
+  1:{ ders:"İki komşu taşı kaydır, aynı renkten üç tane yan yana gelsin. Zıplayan taşlar sana yolu gösteriyor.",
+      ipucu:true, cols:7, renk:5, hamle:26, kum:0, puan:2200,
+      gorevler:[{tip:"renk",miktar:12},{tip:"tasarruf",miktar:10}] },
+  2:{ ders:"Dört taşı yan yana dizersen ok çıkar. Oka dokun ya da yanındakiyle kaydır, bütün satırı süpürsün.",
+      cols:7, renk:5, hamle:24, kum:0, puan:2800,
+      gorevler:[{tip:"guc",miktar:1},{tip:"guc",miktar:3}] },
+  3:{ ders:"Kum karoların üstündeki taşı patlat, karo da temizlensin. Alttaki karolara ulaşmak için üstünü boşalt.",
+      cols:7, renk:5, hamle:24, kum:14, puan:3200,
+      gorevler:[{tip:"kum",miktar:5},{tip:"kum",miktar:11}] }
+};
 
 function bolumUret(n){
   const rnd=mulberry32((n*2654435761)>>>0);
   for(let i=0;i<4;i++) rnd();
+  const og=OGRETICI[n]||null;
 
-  const cols = n<3 ? 7 : (7 + Math.floor(rnd()*2));      // 7–8
+  const cols = og ? og.cols : (n<5 ? 7 : (7 + Math.floor(rnd()*2)));
   const rows = cols;
-  const renkSayisi = n<4 ? 5 : (n<9 ? (rnd()<.5?5:6) : 6);
+  const renkSayisi = og ? og.renk : (n<7 ? 5 : (n<12 ? (rnd()<.5?5:6) : 6));
 
-  // tahta şekli — oyuklar yalnızca sütunların tepesinde, düşüş bozulmasın
+  // tahta şekli — oyuklar yalnızca sütun tepelerinde, yoksa düşüş bozulur
   const blocked = Array.from({length:rows},()=>Array(cols).fill(false));
-  const sekiller = n<5 ? ["dolu"] : ["dolu","kemer","centik","basamak","dolu"];
+  const sekiller = og ? ["dolu"]
+                 : n<6 ? ["dolu"]
+                 : ["dolu","kemer","centik","basamak","dis","piramit","kanat"];
   const sekil = sekiller[Math.floor(rnd()*sekiller.length)];
   const cut=(r,c)=>{ if(r>=0&&r<rows&&c>=0&&c<cols) blocked[r][c]=true; };
   if(sekil==="kemer"){
-    const k=2;
-    for(let r=0;r<k;r++) for(let c=0;c<k-r;c++){ cut(r,c); cut(r,cols-1-c); }
+    for(let r=0;r<2;r++) for(let c=0;c<2-r;c++){ cut(r,c); cut(r,cols-1-c); }
   }else if(sekil==="centik"){
     const m=Math.floor(cols/2);
     cut(0,m); if(cols%2===0) cut(0,m-1);
     cut(0,0); cut(0,cols-1);
   }else if(sekil==="basamak"){
     cut(0,0); cut(1,0); cut(0,1); cut(0,cols-1); cut(1,cols-1); cut(0,cols-2);
+  }else if(sekil==="dis"){
+    for(let c=0;c<cols;c+=2) cut(0,c);
+  }else if(sekil==="piramit"){
+    const d=2;
+    for(let c=0;c<cols;c++){
+      const k=Math.max(0,d-Math.round(Math.abs(c-(cols-1)/2)));
+      for(let r=0;r<k;r++) cut(r,c);
+    }
+  }else if(sekil==="kanat"){
+    for(let r=0;r<3;r++){ cut(r,0); cut(r,cols-1); }
   }
 
   const oynanabilir=[];
   for(let r=0;r<rows;r++) for(let c=0;c<cols;c++) if(!blocked[r][c]) oynanabilir.push([r,c]);
 
-  // hedef
-  let tip;
-  if(n===1) tip="skor";
-  else if(n===2) tip="renk";
-  else if(n===3) tip="kum";
-  else if(n===4) tip="guc";
-  else tip=HEDEF_TIPLERI[Math.floor(rnd()*HEDEF_TIPLERI.length)];
-
-  // önce hamle bütçesi, hedefler ondan türetilir — böylece her bölüm çözülebilir kalır
-  const taban = tip==="skor" ? 18 : tip==="renk" ? 17 : tip==="kum" ? 19 : 20;
+  // hamle bütçesi önce; hedef ve görevler ondan türer, bölüm çözülebilir kalır
   const hamleKesinti = Math.min(6,(n-1)*0.2) + Math.min(2,Math.max(0,n-31)*0.02);
-  const hamle = Math.max(12, Math.round(taban + Math.floor(rnd()*6) - hamleKesinti));
-  const zorluk = 0.74 + Math.min(0.48,(n-1)*0.021) + Math.min(0.18,Math.max(0,n-24)*0.0035);
+  const hamle = og ? og.hamle : Math.max(12, Math.round(19 + Math.floor(rnd()*5) - hamleKesinti));
+  const zorluk = og ? 0.55
+               : 0.74 + Math.min(0.48,(n-1)*0.021) + Math.min(0.18,Math.max(0,n-24)*0.0035);
 
   const referans = Math.round(hamle*(365+Math.min(255,n*6))*zorluk);
+  const hedef = { tip:"skor", miktar: og ? og.puan : Math.round(referans/50)*50 };
 
-  const hedef={tip};
-  if(tip==="skor"){
-    hedef.miktar = Math.round(referans/50)*50;
-  }else if(tip==="renk"){
-    hedef.renk = Math.floor(rnd()*renkSayisi);
-    hedef.miktar = Math.max(14, Math.round(hamle*2.2*zorluk));
-  }else if(tip==="kum"){
-    hedef.miktar = Math.max(8, Math.round(hamle*0.65*zorluk));
-  }else{
-    hedef.miktar = Math.max(3, Math.round(hamle*0.19*zorluk) + Math.min(2, Math.floor(n/20)));
-  }
-
-  // kum karolar
+  // kum karolar — yoğunluk üç kademeli, çeşitliliğin bir parçası
   const sand=Array.from({length:rows},()=>Array(cols).fill(0));
   const havuz=oynanabilir.slice();
   for(let i=havuz.length-1;i>0;i--){ const j=Math.floor(rnd()*(i+1)); const t=havuz[i];havuz[i]=havuz[j];havuz[j]=t; }
 
-  if(tip==="kum"){
-    const ciftKat = n>=14;
-    let kalan=hedef.miktar, i=0;
-    while(kalan>0 && i<havuz.length){
-      const [r,c]=havuz[i++];
-      const kat = (ciftKat && kalan>=2 && rnd()<(n>=32?0.58:0.4)) ? 2 : 1;
-      sand[r][c]=kat; kalan-=kat;
-    }
-    hedef.miktar-=kalan;                     // tahta küçükse hedefi kırp
-  }else if(n>=6){
-    const adet=Math.min(havuz.length, Math.floor(oynanabilir.length*0.15*Math.min(1.5,zorluk+0.4)));
-    for(let i=0;i<adet;i++){ const [r,c]=havuz[i]; sand[r][c]=1; }
+  const kumKademe = og ? (og.kum?1:0) : (n<4 ? 0 : [0,1,1,2][Math.floor(rnd()*4)]);
+  // Desen kum karoların nereye düştüğünü belirler: dağınık kolay, alt sıralar
+  // zor (üstünü boşaltmadan ulaşılmıyor), şerit ise ikisinin arası.
+  const kumDesen = (og||kumKademe===0) ? "dagilmis"
+                 : ["dagilmis","alt","serit"][Math.floor(rnd()*3)];
+  let kumAdet=0;
+  if(og){ kumAdet=og.kum; }
+  else if(kumKademe===1) kumAdet=Math.floor(oynanabilir.length*0.16);
+  else if(kumKademe===2) kumAdet=Math.floor(oynanabilir.length*0.30);
+
+  let aday=havuz;
+  if(kumDesen==="alt") aday=havuz.slice().sort((a,b)=>b[0]-a[0]);
+  else if(kumDesen==="serit") aday=havuz.filter(([r])=>r%2===1).concat(havuz.filter(([r])=>r%2===0));
+  let kumToplam=0;
+  for(let i=0;i<Math.min(kumAdet,aday.length);i++){
+    const [r,c]=aday[i];
+    const kat=(kumKademe===2 && n>=14 && rnd()<0.45)?2:1;
+    sand[r][c]=kat; kumToplam+=kat;
   }
 
-  // Puan ve renk hedefleri erken bitirilebilir; kum ve güç hedeflerinde
-  // ilerleme hamle başına sınırlı olduğundan yıldız eşikleri ayrışıyor.
-  const yildizOran = (tip==="skor"||tip==="renk") ? [0.38,0.16] : [0.20,0.07];
-  return { n, rows, cols, renkSayisi, blocked, sand, hedef, hamle, referans, yildizOran, seed:(n*7919)>>>0 };
+  // iki görev: biri kolay (2. yıldız), biri zor (3. yıldız)
+  let gorevler;
+  if(og){
+    gorevler=og.gorevler.map((g,i)=>({
+      tip:g.tip,
+      miktar:g.miktar!==undefined?g.miktar:gorevMiktar(g.tip,hamle,zorluk,n,i===1),
+      renk:g.tip==="renk"?Math.floor(rnd()*renkSayisi):undefined
+    }));
+  }else{
+    const havuzT=GOREV_TIPLERI.filter(t=>{
+      if(t==="kum") return kumToplam>=6;
+      if(t==="prizma") return n>=10;
+      if(t==="kombo") return n>=8;
+      if(t==="zincir"||t==="tekSeferde") return n>=5;
+      return true;
+    });
+    const a=havuzT[Math.floor(rnd()*havuzT.length)];
+    const kalan=havuzT.filter(t=>t!==a);
+    const b=kalan[Math.floor(rnd()*kalan.length)];
+    gorevler=[a,b].map((t,i)=>{
+      const g={ tip:t, miktar:gorevMiktar(t,hamle,zorluk,n,i===1) };
+      if(t==="renk") g.renk=Math.floor(rnd()*renkSayisi);
+      if(t==="kum")  g.miktar=Math.min(g.miktar,kumToplam);
+      return g;
+    });
+  }
+
+  return { n, rows, cols, renkSayisi, blocked, sand, hedef, gorevler, hamle, referans,
+           ogretici:og, kumKademe, kumDesen, sekil, seed:(n*7919)>>>0 };
 }
 
 function hedefMetni(L){
-  const h=L.hedef;
-  const y=(sayi,ad,renk)=>({ html:`<b>${sayi}</b> ${ad}`, sayi, ad, renk });
-  if(h.tip==="skor") return y(fmt(h.miktar),"puan topla","#B08D57");
-  if(h.tip==="renk") return y(h.miktar,GEMS[h.renk].ad+" taşı topla",GEMS[h.renk].c);
-  if(h.tip==="kum")  return y(h.miktar,"kum karo temizle",SAND2);
-  return y(h.miktar,"özel taş üret",INK);
+  return { html:`<b>${fmt(L.hedef.miktar)}</b> puan topla`,
+           sayi:fmt(L.hedef.miktar), ad:"puan topla", renk:"#B08D57" };
 }
+
+function gorevMetni(g){
+  switch(g.tip){
+    case "renk":       return g.miktar+" "+GEMS[g.renk].ad+" taşı topla";
+    case "kum":        return g.miktar+" kum karo temizle";
+    case "guc":        return g.miktar+" özel taş üret";
+    case "prizma":     return g.miktar+" prizma üret";
+    case "zincir":     return g.miktar+" kademeli zincir yap";
+    case "kombo":      return g.miktar+" özel taş birleşimi yap";
+    case "tekSeferde": return "tek hamlede "+g.miktar+" taş temizle";
+    case "tasarruf":   return g.miktar+" hamle artırarak bitir";
+  }
+  return "";
+}
+// Şeritte tek satıra sığması gerekiyor; kısa tutuluyor.
+function gorevKisa(g){
+  switch(g.tip){
+    case "renk":       return GEMS[g.renk].ad;
+    case "kum":        return "kum";
+    case "guc":        return "özel taş";
+    case "prizma":     return "prizma";
+    case "zincir":     return "zincir";
+    case "kombo":      return "birleşim";
+    case "tekSeferde": return "patlama";
+    case "tasarruf":   return "artan";
+  }
+  return "";
+}
+// Görevin o anki değeri. tasarruf yalnızca bölüm bitince ölçülebilir.
+function gorevDeger(g){
+  switch(g.tip){
+    case "renk":       return sayac.renk[g.renk]||0;
+    case "kum":        return sayac.kum;
+    case "guc":        return sayac.guc;
+    case "prizma":     return sayac.prizma;
+    case "zincir":     return sayac.enZincir;
+    case "kombo":      return sayac.kombo;
+    case "tekSeferde": return sayac.enTekHamle;
+    case "tasarruf":   return hamleHedefte>0 ? hamleHedefte : hamle;
+  }
+  return 0;
+}
+const gorevTamam = g => gorevDeger(g) >= g.miktar;
 
 /* ============================ bölgeler ============================ */
 
@@ -966,7 +1109,12 @@ const zctx=zeminCv.getContext("2d");
 let zeminKirli=true;
 
 let durum="hazir";          // hazir | oyna | mesgul | bitti
-let hamle=0, puan=0, ilerleme=0, uretilenGuc=0;
+let hamle=0, puan=0, uretilenGuc=0;
+// Görevlerin okuduğu sayaçlar; her bölüm başında sıfırlanır.
+let sayac={renk:{},kum:0,guc:0,prizma:0,enZincir:0,kombo:0,enTekHamle:0,hamleTemiz:0};
+function sayacSifirla(){
+  sayac={renk:{},kum:0,guc:0,prizma:0,enZincir:0,kombo:0,enTekHamle:0,hamleTemiz:0};
+}
 let shake=0, shakeX=0, shakeY=0;
 const parts=[];
 const rings=[];
@@ -977,6 +1125,7 @@ let flash=0;             // tahta üstü parlama
 let donma=0;             // darbe duraklaması (hitstop)
 const floats=[];
 let hintTimer=0, hintMove=null, hintT=0, hintArandi=false;
+let ogreticiIpucu=false;      // ilk bölümde ilk hamleye kadar yol göster
 const IPUCU_GECIKME=5;
 
 /* ---- taş ---- */
@@ -1018,10 +1167,12 @@ function baslangicKotu(r,c,t){
   return false;
 }
 
-const IPUCU_YER=50;                      // .gucbar yüksekliği + üst boşluk
 function olcuAyarla(){
   const stage=document.querySelector(".stage");
-  const w=stage.clientWidth, h=stage.clientHeight-IPUCU_YER;
+  const bar=document.querySelector(".gucbar");
+  // şerit sarabildiği için yüksekliği sabit varsaymıyoruz
+  const barYer=bar?bar.offsetHeight+8:50;
+  const w=stage.clientWidth, h=stage.clientHeight-barYer;
   if(w<=0||h<=0) return;
   const pad=6;
   cell=Math.floor(Math.min((w-pad*2)/cols,(h-pad*2)/rows));
@@ -1198,20 +1349,15 @@ function hucreYok(k,gecikme,renk){
   const g=at(r,c);
   if(!g||g.durum==="clear") return;
   g.durum="clear"; g.t=-gecikme; g.flash=1;
+  sayac.hamleTemiz++;
+  sayac.renk[g.type]=(sayac.renk[g.type]||0)+1;
   if(sand[r][c]>0){
     sand[r][c]--;
     zeminKirli=true;
-    ilerlemeEkle("kum",1);
+    sayac.kum++;
     kumZerre(r,c);
   }
-  ilerlemeEkle("renk",1,g.type);
 }
-function ilerlemeEkle(tip,adet,renk){
-  const h=L.hedef;
-  if(h.tip==="kum" && tip==="kum") ilerleme+=adet;
-  if(h.tip==="renk" && tip==="renk" && renk===h.renk) ilerleme+=adet;
-}
-
 function yercekimi(){
   for(let c=0;c<cols;c++){
     let top=0;
@@ -1279,6 +1425,8 @@ async function takasDene(a,b){
 
 function hamleHarca(){
   hamle=Math.max(0,hamle-1);
+  ogreticiIpucu=false;             // ilk hamle yapıldı, yönlendirme biter
+  sayac.hamleTemiz=0;              // "tek hamlede" görevi için sayaç
   buzz(TIT.hamle);                 // her hamlede çok hafif bir tık
   const card=document.getElementById("cardMoves");
   card.classList.add("bump");
@@ -1325,6 +1473,7 @@ async function komboUygula(kombo,ga,gb){
   const r=gb.r,c=gb.c;
   let hedefler=[];
   // Kısa bir gerilim: iki taş şişip parlıyor, sonra patlama geliyor.
+  if(kombo.tip!=="guc-tek") sayac.kombo++;
   ga.flash=1; gb.flash=1; ga.scale=1.34; gb.scale=1.34;
   halka(c,r,1.1);
   await wait(REDUCED?0:110);
@@ -1482,10 +1631,12 @@ function bstBaslat(tip){
   if(bstModu===tip){ bstIptal(); return; }
   if(envSay(tip)<=0){ magazaAc(); return; }      // stok yoksa depoyu aç
   if(tip==="prizma"){ bstPrizma(); return; }   // hedef seçmez, doğrudan uygulanır
+  if(tip==="karistir"){ bstKaristir(); return; }
   bstModu=tip; bstSecili=null;
   ipucuSifirla();
   ipucu(tip==="patlat" ? "Patlatmak istediğin taşa dokun"
-                       : "Yer değiştirecek iki komşu taşa dokun");
+       : tip==="kazma"  ? "Ortasını seç, 3×3 alan temizlensin"
+       : "Yer değiştirecek iki komşu taşa dokun");
   gucDugmeleri();
 }
 
@@ -1535,12 +1686,47 @@ function bstPrizma(){
   ipucu("Prizma hazır");
 }
 
+// Taşların yerini değiştirir; eşleşme oluşursa normal akış devralır.
+async function bstKaristir(){
+  if(!envKullan("karistir")) return;
+  bstIptal();
+  durum="mesgul";
+  buzz(TIT.onay); sarsinti(10); parlama(0.16);
+  karistir(false);
+  await until(()=>yerlestiMi());
+  await wait(120);
+  ipucu("Tahta karıştırıldı");
+  await cozumle(null);
+  await bitisKontrol();
+}
+
+// Dokunulan hücrenin çevresindeki 3×3 alanı temizler.
+async function bstKazma(r,c){
+  if(!envKullan("kazma")) return;
+  bstIptal();
+  durum="mesgul";
+  sarsinti(15); sok(c+.5,r+.5,2.6); parlama(0.2); dur(70); buzz(TIT.onay);
+  const hedefler=[];
+  for(let y=r-1;y<=r+1;y++) for(let x=c-1;x<=c+1;x++) if(oyn(y,x)) hedefler.push(key(y,x));
+  const {temiz,etki}=zincirGenislet(hedefler,null);
+  gucEfekti(etki);
+  const liste=[...temiz];
+  puanEkle(liste.length*45,c,r,1);
+  let i=0;
+  for(const k of liste) hucreYok(k,Math.min(0.2,(i++%16)*0.012),null);
+  await wait(240);
+  temizleVeDus();
+  await cozumle(null);
+  await bitisKontrol();
+}
+
 function bstDokunus(e){
   if(durum!=="oyna"){ bstIptal(); return; }
   const h=hucreBul(e);
   if(!h) return;
   buzz(TIT.sec);
   if(bstModu==="patlat"){ bstPatlat(h.r,h.c); return; }
+  if(bstModu==="kazma"){ bstKazma(h.r,h.c); return; }
   if(bstModu==="takas"){
     if(!bstSecili){ bstSecili=h; ipucu("Şimdi komşu taşa dokun"); return; }
     const uzak=Math.abs(bstSecili.r-h.r)+Math.abs(bstSecili.c-h.c);
@@ -1593,8 +1779,8 @@ async function cozumle(swap){
       const g=grid[r][c];
       if(g){
         g.power=d.guc; g.flash=1; g.dogum=0;
-        uretilenGuc++;
-        if(L.hedef.tip==="guc") ilerleme++;
+        uretilenGuc++; sayac.guc++;
+        if(d.guc===P_PRISM) sayac.prizma++;
         halka(c,r,d.guc===P_PRISM?3:1.8);
         sok(c+.5,r+.5,d.guc===P_PRISM?2.6:1.7);
         zerre(c,r,d.guc===P_PRISM?"#FFF6E4":GEMS[g.type].c,d.guc===P_PRISM?14:8);
@@ -1603,6 +1789,7 @@ async function cozumle(swap){
         buzz(d.guc===P_PRISM?40:20);
       }
     }
+    if(zincir>sayac.enZincir) sayac.enZincir=zincir;
     if(n>0){
       const kazanc=Math.round(toplam*60*(1+(zincir-1)*0.6));
       puanEkle(kazanc,cx/n,cy/n,zincir);
@@ -1998,6 +2185,32 @@ function gucIkonCiz(kutu,tip,px){
   g.setTransform(d,0,0,d,0,0); g.clearRect(0,0,px,px);
   const c=px/2;
   if(tip==="prizma"){ tasCiz(g,4,c,c,px*0.86,P_PRISM); return; }
+  if(tip==="karistir"){                        // dönen iki ok
+    g.strokeStyle=INK; g.lineCap="round"; g.lineWidth=Math.max(1.6,px*0.085);
+    for(let i=0;i<2;i++){
+      const y0=i?1:-1;
+      g.beginPath();
+      g.arc(c,c,px*0.28,i?0.5:3.64,i?2.2:5.35);
+      g.stroke();
+      const a=i?2.2:5.35, ux=c+Math.cos(a)*px*0.28, uy=c+Math.sin(a)*px*0.28;
+      g.beginPath();
+      g.moveTo(ux-px*0.10*y0,uy-px*0.04); g.lineTo(ux,uy); g.lineTo(ux-px*0.02,uy-px*0.12*y0);
+      g.stroke();
+    }
+    return;
+  }
+  if(tip==="kazma"){                           // 3×3 kare ve ortada patlama
+    g.strokeStyle=INK; g.lineJoin="round"; g.lineWidth=Math.max(1.5,px*0.075);
+    const q=px*0.34;
+    g.strokeRect(c-q,c-q,q*2,q*2);
+    g.beginPath(); g.moveTo(c-q,c-q/3); g.lineTo(c+q,c-q/3);
+    g.moveTo(c-q,c+q/3); g.lineTo(c+q,c+q/3);
+    g.moveTo(c-q/3,c-q); g.lineTo(c-q/3,c+q);
+    g.moveTo(c+q/3,c-q); g.lineTo(c+q/3,c+q);
+    g.globalAlpha=.45; g.stroke(); g.globalAlpha=1;
+    g.beginPath(); g.arc(c,c,px*0.11,0,6.2832); g.fillStyle=INK; g.fill();
+    return;
+  }
   g.strokeStyle=INK; g.lineCap="round"; g.lineJoin="round";
   g.lineWidth=Math.max(1.6,px*0.085);
   if(tip==="takas"){
@@ -2018,6 +2231,51 @@ function gucIkonCiz(kutu,tip,px){
       g.lineTo(c+Math.cos(a)*px*0.43,c+Math.sin(a)*px*0.43);
     }
     g.stroke();
+  }
+}
+
+function gorevIkonCiz(kutu,g,px){
+  const c=kutu.getContext("2d");
+  const d=Math.min(window.devicePixelRatio||1,3);
+  kutu.width=Math.round(px*d); kutu.height=Math.round(px*d);
+  kutu.style.width=px+"px"; kutu.style.height=px+"px";
+  c.setTransform(d,0,0,d,0,0); c.clearRect(0,0,px,px);
+  const m=px/2, s=px*0.88;
+  c.strokeStyle=INK; c.lineCap="round"; c.lineJoin="round"; c.lineWidth=Math.max(1.5,px*0.09);
+  switch(g.tip){
+    case "renk":   tasCiz(c,g.renk,m,m,s); break;
+    case "kum":    kumKaroCiz(c,m,m,s*0.94); break;
+    case "guc":    tasCiz(c,3,m,m,s,P_BOMB); break;
+    case "prizma": tasCiz(c,4,m,m,s,P_PRISM); break;
+    case "zincir":                                   // basamaklanan üç halka
+      for(let i=0;i<3;i++){
+        c.beginPath();
+        c.arc(m-px*0.24+i*px*0.24, m-px*0.20+i*px*0.20, px*0.13, 0, 6.2832);
+        c.stroke();
+      }
+      break;
+    case "kombo":                                    // iç içe geçen iki halka
+      c.beginPath(); c.arc(m-px*0.13,m,px*0.20,0,6.2832); c.stroke();
+      c.beginPath(); c.arc(m+px*0.13,m,px*0.20,0,6.2832); c.stroke();
+      break;
+    case "tekSeferde":                               // dağılan ışınlar
+      c.beginPath(); c.arc(m,m,px*0.15,0,6.2832); c.stroke();
+      c.lineWidth=Math.max(1.3,px*0.07);
+      c.beginPath();
+      for(let i=0;i<6;i++){
+        const a=i*Math.PI/3+0.4;
+        c.moveTo(m+Math.cos(a)*px*0.26,m+Math.sin(a)*px*0.26);
+        c.lineTo(m+Math.cos(a)*px*0.42,m+Math.sin(a)*px*0.42);
+      }
+      c.stroke();
+      break;
+    default:                                         // tasarruf: yukarı çift ok
+      c.beginPath();
+      for(let i=0;i<2;i++){
+        const y=m+px*0.10+i*px*0.20;
+        c.moveTo(m-px*0.22,y); c.lineTo(m,y-px*0.18); c.lineTo(m+px*0.22,y);
+      }
+      c.stroke();
   }
 }
 
@@ -2364,6 +2622,9 @@ function dongu(now){
     for(const tip in BST) el("bst-"+tip).disabled=!oyunda;
     if(!oyunda&&bstModu) bstIptal();
   }
+  if(durum==="oyna" && ogreticiIpucu && !hintMove && !bstModu){
+    hintMove=enIyiHamle(); hintT=0;      // öğreticide yol sürekli açık
+  }
   if(durum==="oyna"){
     hintTimer+=dt;
     if(hintTimer>IPUCU_GECIKME&&!hintArandi){
@@ -2382,7 +2643,43 @@ function dongu(now){
 
 const el=id=>document.getElementById(id);
 
-let ikonBolum=-1, puanGosterilen=0, puanRaf=0, sonIlerleme=0;
+let ikonBolum=-1, puanGosterilen=0, puanRaf=0;
+let gorevKurulu=-1;
+
+// Görev şeridi: iki kart, her biri bir yıldız değerinde.
+function gorevleriKur(){
+  const kutu=el("gorevler");
+  kutu.innerHTML="";
+  L.gorevler.forEach((g,i)=>{
+    const d=document.createElement("div");
+    d.className="gorev";
+    d.innerHTML='<canvas aria-hidden="true"></canvas>'+
+      '<span class="gm"><span class="gt"></span><span class="gs"></span></span>'+
+      '<span class="gy">★</span>';
+    gorevIkonCiz(d.querySelector("canvas"),g,22);
+    d.querySelector(".gt").textContent=gorevKisa(g);
+    d.setAttribute("aria-label",gorevMetni(g));
+    kutu.appendChild(d);
+  });
+  gorevKurulu=L.n;
+}
+function gorevleriGuncelle(){
+  if(gorevKurulu!==L.n) gorevleriKur();
+  const kartlar=el("gorevler").children;
+  L.gorevler.forEach((g,i)=>{
+    const k=kartlar[i]; if(!k) return;
+    const d=Math.min(gorevDeger(g),g.miktar);
+    k.querySelector(".gs").textContent=d+" / "+g.miktar;
+    const t=gorevTamam(g);
+    if(t!==k.classList.contains("tamam")){
+      const ilk=!k.dataset.kuruldu;
+      k.dataset.kuruldu="1";
+      k.classList.toggle("tamam",t);
+      // kutlama yalnızca oyun sırasındaki geçişte; ilk çizimde değil
+      if(t&&!ilk&&durum==="oyna"){ buzz(TIT.onay); ipucu("Görev tamam: "+gorevMetni(g)); }
+    }
+  });
+}
 // Hedefe varıldığı andaki yıldız. Kazanma bonusu kalan hamleleri
 // harcadığı için gösterge sonrasında düşmesin diye kilitleniyor.
 let yildizKilit=null;
@@ -2422,13 +2719,10 @@ function hudGuncelle(){
   const kartH=el("cardMoves");
   kartH.classList.toggle("low",hamle<=4);
   el("movesBar").style.width=clamp(hamle/L.hamle*100,0,100)+"%";
-  el("esik3").style.left=(L.yildizOran[0]*100)+"%";
-  el("esik2").style.left=(L.yildizOran[1]*100)+"%";
-
   let olasi;
   if(yildizKilit!==null) olasi=yildizKilit;
   else {
-    olasi=yildizOranHesap(hamle);
+    olasi=yildizAnlik();
     if(hedefTamam()) yildizKilit=olasi;      // ödül bu değer üzerinden veriliyor
   }
   const yl=el("movesStars").children;
@@ -2448,15 +2742,10 @@ function hudGuncelle(){
   const h=L.hedef, m=hedefMetni(L);
   el("goalText").innerHTML=m.html;
   if(ikonBolum!==L.n){ hedefIkonCiz(el("goalIcon"),L,26); ikonBolum=L.n; }
-  const su = h.tip==="skor" ? puan : ilerleme;
-  el("goalCount").textContent=fmt(Math.min(su,h.miktar))+" / "+fmt(h.miktar);
-  el("goalBar").style.width=clamp(su/h.miktar*100,0,100)+"%";
-  el("goal").classList.toggle("done",su>=h.miktar);
-  if(su>sonIlerleme && h.tip!=="skor"){
-    const ik=el("goalIcon");
-    ik.classList.remove("tik"); void ik.offsetWidth; ik.classList.add("tik");
-  }
-  sonIlerleme=su;
+  el("goalCount").textContent=fmt(Math.min(puan,h.miktar))+" / "+fmt(h.miktar);
+  el("goalBar").style.width=clamp(puan/h.miktar*100,0,100)+"%";
+  el("goal").classList.toggle("done",puan>=h.miktar);
+  gorevleriGuncelle();
 }
 function ipucu(txt){
   const h=el("hint");
@@ -2473,13 +2762,22 @@ let bolumNo=1, enIyi=0, puanHedefte=0, hamleHedefte=0;
 const EK_HAMLE=5;
 let devamKalan=1, devamKullanildi=false;
 
-function hedefTamam(){
-  const h=L.hedef;
-  return h.tip==="skor" ? puan>=h.miktar : ilerleme>=h.miktar;
+// Bölümün asıl hedefi her zaman puan; görevler yıldız ve ek ödeme içindir.
+function hedefTamam(){ return puan>=L.hedef.miktar; }
+function yildizAnlik(){
+  let y=1;
+  for(const g of L.gorevler) if(gorevTamam(g)) y++;
+  if(devamKullanildi) y=Math.min(2,y);
+  return Math.min(3,y);
 }
 
 async function bitisKontrol(){
-  if(hedefTamam()){ puanHedefte=puan; hamleHedefte=hamle; await kazandi(); return; }
+  if(sayac.hamleTemiz>sayac.enTekHamle) sayac.enTekHamle=sayac.hamleTemiz;
+  if(hedefTamam()){
+    puanHedefte=puan; hamleHedefte=hamle;
+    yildizKilit=yildizAnlik();          // görevler bu an itibarıyla ölçülür
+    await kazandi(); return;
+  }
   if(hamle<=0){ await kaybetti(); return; }
   durum="oyna";
 }
@@ -2541,7 +2839,8 @@ async function kazandi(){
   sk[L.n]=[Math.max(yildiz,onceki?onceki[0]:0), Math.max(puan,onceki?onceki[1]:0)];
   if(puan>enIyi) enIyi=puan;
   bolumNo=L.n+1;
-  const odul=altinOdul(yildiz,!onceki);
+  const oncekiYildiz = onceki ? onceki[0] : 0;
+  const odul=altinOdul(yildiz,oncekiYildiz);
   await Save.put({ level:Math.max(Save.mem.level||1,bolumNo), best:Math.max(Save.mem.best||0,puan),
                    sk, altin:altinVar()+odul });
   altinGuncelle(true);
@@ -2556,7 +2855,12 @@ async function kazandi(){
     rekor:!onceki||puan>onceki[1],
     // Kazanma bonusu kalan hamleleri harcadığı için burada hedefe
     // varıldığı andaki sayı gösteriliyor; yıldızı belirleyen de o.
-    yanlar:[{k:"Kalan hamle",v:hamleHedefte},{k:"Altın",v:"+"+fmt(odul),altin:true}],
+    yanlar:[{k:"Kalan hamle",v:hamleHedefte},{k:"Altın",v:odul?"+"+fmt(odul):"—",altin:true}],
+    odemeNot: oncekiYildiz<=0
+      ? "İlk bitiriş: "+ODUL_TABAN+" taban + yıldız başına "+ODUL_YILDIZ+" + "+ODUL_ILK+" ilk geçiş."
+      : (odul>0
+          ? "Yıldızın "+oncekiYildiz+"'den "+yildiz+"'e çıktı; artan yıldız başına "+ODUL_YILDIZ+" altın."
+          : "Bu bölümde zaten "+oncekiYildiz+" yıldızın vardı. Ek ödeme yok; yalnızca rekorun güncellenir."),
     birincil:"Bölüm "+bolumNo+"’e geç",
     ikincil: yildiz<3 ? "Bu bölümü tekrar oyna" : null, ikincilKapatma:true,
     onBirincil:()=>bolumBaslat(bolumNo),
@@ -2570,19 +2874,15 @@ async function kazandi(){
 // Yıldız, hedefe varıldığı anda kalan hamle oranına bakar. Aynı hesabı
 // oyun sürerken de yaptığımız için oyuncu "şimdi bitirsem kaç yıldız"
 // sorusunun cevabını HUD'da canlı görüyor.
-function yildizOranHesap(kalan){
-  const oran=kalan/L.hamle;
-  let y = oran>=L.yildizOran[0] ? 3 : oran>=L.yildizOran[1] ? 2 : 1;
-  if(devamKullanildi) y=Math.min(2,y);
-  return y;
-}
-function yildizHesapla(){ return yildizOranHesap(hamleHedefte); }
+// Bitirmek bir yıldız; tamamlanan her görev bir yıldız daha.
+// Ödül, hedefe varıldığı anda kilitlenen değer üzerinden verilir.
+function yildizHesapla(){ return yildizKilit!==null ? yildizKilit : yildizAnlik(); }
 function yildizNotu(y){
   if(devamKullanildi && y===2)
     return "İki yıldız. Ek hamle aldığın için tavan buydu; tek oturuşta bitirirsen üçüncüsü gelir.";
-  if(y===3) return "Üç yıldız. Hedefi bol hamle kalmışken bitirdin.";
-  if(y===2) return "İki yıldız. Hedefe daha az hamlede varırsan üçüncüsü gelir.";
-  return "Hedef tamam. Tekrar oynayıp daha hızlı bitirirsen yıldız toplarsın.";
+  if(y===3) return "Üç yıldız. Puan hedefini tuttun, iki görevi de bitirdin.";
+  if(y===2) return "İki yıldız. Kalan görevi de bitirirsen üçüncüsü gelir.";
+  return "Puan hedefi tamam. Görevleri de tamamlarsan yıldız kazanırsın.";
 }
 
 // Aynı tahtadan beş hamleyle sürdürme. Hak bölüm başına bir kez;
@@ -2605,7 +2905,7 @@ async function kaybetti(){
   const n=L.n;
   const devamVar=devamKalan>0;
   const h=L.hedef;
-  const su=h.tip==="skor"?puan:ilerleme;
+  const su=puan;
   const eksik=Math.max(0,h.miktar-su);
   ekranGoster({
     bolge:bolgeBilgi(bolgeNo(n)),
@@ -2614,7 +2914,7 @@ async function kaybetti(){
       ? "Hedefe az kaldı. Aynı tahtadan "+EK_HAMLE+" hamleyle sürdürebilirsin; bu bölümden en çok iki yıldız çıkar."
       : "Hedefe ulaşmak için birkaç hamle eksik kaldı. Tahta yeniden kurulacak.",
     tally:true,
-    yanlar:[{k:"Hedefe kalan",v:h.tip==="skor"?fmt(eksik):eksik},
+    yanlar:[{k:"Hedefe kalan puan",v:fmt(eksik)},
             {k:"Tamamlanan",v:"%"+Math.round(clamp(su/h.miktar*100,0,100))}],
     birincil: devamVar ? EK_HAMLE+" hamle ekle" : "Tekrar dene",
     ikincil: devamVar ? "Tekrar dene" : null, ikincilKapatma:true,
@@ -2666,6 +2966,28 @@ function ekranGoster(o){
     el("vHeroAlt").textContent=o.hedef.ad;
   } else hk.hidden=true;
 
+  // girişte görev listesi
+  const gl=el("vGorevler");
+  gl.innerHTML="";
+  gl.hidden=!(o.gorevler&&o.gorevler.length);
+  if(o.gorevler){
+    const bas=document.createElement("div");
+    bas.className="gorev-basi";
+    bas.textContent="Yıldız görevleri";
+    gl.appendChild(bas);
+    for(const g of o.gorevler){
+      const d=document.createElement("div");
+      d.className="gorev-satir";
+      d.innerHTML='<canvas aria-hidden="true"></canvas><span class="gs"></span><span class="gy">★</span>';
+      gorevIkonCiz(d.querySelector("canvas"),g,26);
+      d.querySelector(".gs").textContent=gorevMetni(g);
+      gl.appendChild(d);
+    }
+  }
+
+  const ders=el("vDers");
+  ders.hidden=!o.ders; ders.textContent=o.ders||"";
+
   // girişte bilgi çipleri
   const ck=el("vChips");
   ck.innerHTML="";
@@ -2688,6 +3010,8 @@ function ekranGoster(o){
   el("vTally").hidden=!o.tally;
   el("vScore").textContent=fmt(puan);
   el("vRecord").hidden=!o.rekor;
+  const on=el("vOdemeNot");
+  on.hidden=!o.odemeNot; on.textContent=o.odemeNot||"";
   const yan=el("vSide");
   yan.innerHTML="";
   if(o.yanlar) for(const k of o.yanlar){
@@ -2772,7 +3096,14 @@ function haritaDugum(n,acik,sk,gecikme){
   if(gecikme>=0){ b.classList.add("gir"); b.style.animationDelay=gecikme.toFixed(3)+"s"; }
 
   if(kilitli){ b.disabled=true; b.setAttribute("aria-disabled","true"); }
-  else b.onclick=()=>{ buzz(TIT.sec); yolHaritasiKapat(); veilKapat(); bolumBaslat(n); };
+  else b.onclick=()=>{
+    buzz(TIT.sec);
+    yolHaritasiKapat(); veilKapat();
+    // harita ana menüden açıldıysa menü de kapanmalı, yoksa yeni bölümün
+    // giriş kağıdının üstünde asılı kalıyor
+    el("menuVeil").classList.remove("on"); menuGeri=null;
+    bolumBaslat(n);
+  };
   return b;
 }
 
@@ -2938,14 +3269,16 @@ function anaMenuKapat(){
 
 function bolumBaslat(n,sessiz){
   L=bolumUret(n);
-  hamle=L.hamle; puan=0; ilerleme=0; uretilenGuc=0; puanHedefte=0; hamleHedefte=0;
+  hamle=L.hamle; puan=0; uretilenGuc=0; puanHedefte=0; hamleHedefte=0;
+  sayacSifirla(); gorevKurulu=-1;
+  ogreticiIpucu=!!(L.ogretici&&L.ogretici.ipucu);
   devamKalan=1; devamKullanildi=false; yildizKilit=null;
   parts.length=0; rings.length=0; floats.length=0;
   secili=null; bas=null; shake=0; hintTimer=0; hintMove=null;
   bstModu=null; bstSecili=null;
   tahtaKur();
   olcuAyarla();
-  puanGosterilen=0; sonIlerleme=0;
+  puanGosterilen=0;
   hudGuncelle();
   const uyg=el("app");
   uyg.classList.remove("giris"); void uyg.offsetWidth; uyg.classList.add("giris");
@@ -2963,6 +3296,8 @@ function bolumBaslat(n,sessiz){
     baslik:"Bölüm "+n,
     alt:kayit?"Daha az hamlede bitirirsen yıldızın artar.":dz+".",
     hedef:{L, sayi:m.sayi, ad:m.ad},
+    gorevler:L.gorevler,
+    ders:L.ogretici?L.ogretici.ders:null,
     cipler,
     tally:false, birincil:"Başla",
     onBirincil:()=>{ durum="oyna"; ipucuSifirla(); }
