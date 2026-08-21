@@ -171,7 +171,9 @@
          margin-top:10px;min-height:0;}
   .stage::before{content:"";order:0;flex:1;}
   .boardwrap{order:1;flex:0 0 auto;}
-  .stage::after{content:"";order:2;flex:1;}
+  /* alt pay tahtayla şerit arasında en az 8px bırakıyor; bu 8px şeridin
+     margin'inde dururken alt boşluk üstten hep 8px fazla görünüyordu. */
+  .stage::after{content:"";order:2;flex:1;min-height:8px;}
   .altbolge{order:3;flex:0 0 auto;width:100%;display:flex;flex-direction:column;align-items:center;}
   canvas#board{display:block;border-radius:22px;touch-action:none;}
 
@@ -188,7 +190,7 @@
 
   /* ---------- güç şeridi ---------- */
   .gucbar{
-    margin-top:8px;flex:0 0 auto;
+    flex:0 0 auto;
     display:flex;align-items:stretch;gap:4px;min-height:42px;
   }
   .altin,.bst,.gucbar .hintbtn{
@@ -965,22 +967,68 @@ function gorevKur(tip,miktar,renk){
   return g;
 }
 
-// Öğretici bölümler elde tasarlandı: küçük tahtada tek bir şey öğretir.
-/* İlk beş bölümde görev yok: oyuncu önce temel hamleyi öğreniyor, yıldızlar
-   artan hamleden geliyor. Puan hedefleri, bölüm birkaç hamlede kapanmasın
-   diye hamle bütçesinin çoğunu kullanacak şekilde yükseltildi. */
+/* İlk beş bölüm artık rastgele değil: açılış tahtaları elde dizildi.
+   Her biri tek bir şeyi öğretiyor ve tasarlanan çözüm kaç hamle sürüyorsa
+   üç yıldız eşiği de tam orada duruyor:
+     1 → 2 hamle, 2 → 4, 3 → 5, 4 → 6, 5 → 12.
+   Hamle bütçesi bu sayının ~2 katı; 3 yıldız için bütçenin %45'i artmalı
+   (YILDIZ_HAMLE), yani tasarlanan hamle sayısında bitiren tam puan alıyor.
+   Görev yok, hedef yalnızca puan. Hedefler tahmin değil ölçüm: her tahta
+   tarayıcıda rastgele oynanıp o hamlede toplanan en düşük puan alındı, hedef
+   de onun hemen altına konuldu. Yani kötü oynayan bile hedefteki hamlede
+   bitiriyor, iyi oynayan bir iki hamle önce. Referans olarak temizlenen taş
+   başına 60 puan var: üçlü 180, özel doğuran dörtlü/beşli 240, ortadaki iki
+   prizmanın birleşimi tek başına 2520 puan.
+
+   duzen  : her hücrenin rengi (rakam = renk indeksi)
+   kumHarita : "x" olan hücrenin altında kum karo var
+   gucler : tahta açılırken yerleştirilen özel taşlar [satır, sütun, tür] */
 const OGRETICI = {
   1:{ ders:"İki komşu taşı kaydır, aynı renkten üç tane yan yana gelsin. Zıplayan taşlar yolu gösteriyor.",
-      ipucu:true, cols:3, renk:3, hamle:16, kum:0, puan:3400, gorev:null },
+      ipucu:true, cols:3, renk:3, hamle:5, kum:0, puan:360, gorev:null,
+      duzen:["010",
+             "102",
+             "021"] },
   2:{ ders:"Tahta büyüdü. Dört taşı yan yana dizersen ok çıkar; ok bütün satırı süpürür.",
-      cols:4, renk:4, hamle:18, kum:0, puan:4800, gorev:null },
-  3:{ ders:"Kum karoların üstündeki taşı patlat, karo da temizlensin. Alttakilere ulaşmak için üstünü boşalt.",
-      cols:5, renk:4, hamle:20, kum:11, puan:7000, gorev:null }
+      ipucu:true, cols:4, renk:4, hamle:8, kum:0, puan:720, gorev:null,
+      duzen:["0100",
+             "2031",
+             "1203",
+             "0312"] },
+  3:{ ders:"Ortadaki sıraya beşinci taşı getir: beşli eşleşme prizma doğurur. Kum karolar da üstlerindeki taş patlayınca temizlenir.",
+      ipucu:true, cols:5, renk:4, hamle:10, kum:10, puan:2000, gorev:null,
+      duzen:["12312",
+             "23023",
+             "00100",
+             "21231",
+             "32123"],
+      kumHarita:[".....",
+                 ".....",
+                 "xxxxx",
+                 "xxxxx",
+                 "....."] }
 };
 
 // 4. ve 5. bölüm hâlâ dar tahta: öğreticiden normale geçiş köprüsü.
-const KOPRU = { 4:{cols:6,renk:5,hamle:20,puan:7000,gorev:null},
-                5:{cols:6,renk:5,hamle:20,puan:7600,gorev:null} };
+const KOPRU = {
+  4:{ ders:"Ortadaki iki prizmayı birbirine kaydır: iki özel taşın buluşması tahtayı silip süpürür.",
+      ipucu:true, cols:6, renk:5, hamle:12, puan:4500, gorev:null,
+      duzen:["302032",
+             "201200",
+             "323413",
+             "132420",
+             "414323",
+             "013002"],
+      gucler:[[2,2,"prizma"],[2,3,"prizma"]] },
+  5:{ ders:"Kum karolar ortada toplandı. Zinciri iyi kur, on karoyu da aç.",
+      cols:6, renk:5, hamle:22, puan:3400, gorev:null,
+      kumHarita:["......",
+                 "..xx..",
+                 ".xxxx.",
+                 ".xxxx.",
+                 "......",
+                 "......"] }
+};
 
 function bolumUret(n){
   const rnd=mulberry32((n*2654435761)>>>0);
@@ -989,6 +1037,7 @@ function bolumUret(n){
   const kp=KOPRU[n]||null;
 
   // tahta boyutu kademeli açılıyor: öğretici 3–5, köprü 6, sonra 6–7, 9'dan sonra 8 de girer
+  const tasarim = og || kp;                    // elde dizilmiş açılış (1–5)
   const cols = og ? og.cols : kp ? kp.cols
              : (n<9 ? [6,7,7][Math.floor(rnd()*3)] : [6,7,7,8,8][Math.floor(rnd()*5)]);
   const rows = cols;
@@ -1054,7 +1103,7 @@ function bolumUret(n){
   const havuz=oynanabilir.slice();
   for(let i=havuz.length-1;i>0;i--){ const j=Math.floor(rnd()*(i+1)); const t=havuz[i];havuz[i]=havuz[j];havuz[j]=t; }
 
-  const kumKademe = og ? (og.kum?1:0) : kp ? (n===5?1:0) : [0,1,1,2][Math.floor(rnd()*4)];
+  const kumKademe = tasarim ? ((tasarim.kum||tasarim.kumHarita)?1:0) : [0,1,1,2][Math.floor(rnd()*4)];
   const kumDesen = (og||kp||kumKademe===0) ? "dagilmis"
                  : ["dagilmis","alt","serit","cekirdek","cerceve"][Math.floor(rnd()*5)];
   let kumAdet = og ? og.kum
@@ -1070,10 +1119,17 @@ function bolumUret(n){
   else if(kumDesen==="cerceve")  aday=havuz.slice().sort((a,b)=>uzak(b)-uzak(a));
 
   let kumToplam=0;
-  for(let i=0;i<Math.min(kumAdet,aday.length);i++){
-    const [r,c]=aday[i];
-    const kat=(kumKademe===2 && n>=14 && rnd()<0.45)?2:1;
-    sand[r][c]=kat; kumToplam+=kat;
+  if(tasarim && tasarim.kumHarita){
+    // elde çizilmiş kum haritası: karo sayısı bölüm tasarımının parçası
+    tasarim.kumHarita.forEach((satir,r)=>{
+      for(let c=0;c<cols;c++) if(satir[c]==="x" && !blocked[r][c]){ sand[r][c]=1; kumToplam++; }
+    });
+  }else{
+    for(let i=0;i<Math.min(kumAdet,aday.length);i++){
+      const [r,c]=aday[i];
+      const kat=(kumKademe===2 && n>=14 && rnd()<0.45)?2:1;
+      sand[r][c]=kat; kumToplam+=kat;
+    }
   }
 
   // bazı bölümler hediye bir özel taşla açılır
@@ -1100,7 +1156,9 @@ function bolumUret(n){
   }
 
   return { n, rows, cols, renkSayisi, blocked, sand, hedef, gorev, hamle, referans,
-           ogretici:og, kumKademe, kumDesen, sekil, hediye, seed:(n*7919)>>>0 };
+           ogretici:tasarim, kumKademe, kumDesen, sekil, hediye, seed:(n*7919)>>>0,
+           duzen: tasarim ? (tasarim.duzen||null) : null,
+           gucler: tasarim ? (tasarim.gucler||null) : null };
 }
 
 function hedefMetni(L){
@@ -1248,15 +1306,29 @@ function tahtaKur(){
   rnd=mulberry32(L.seed);
   gemId=1;
 
-  for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){
-    if(blocked[r][c]) continue;
-    let t, deneme=0;
-    do{ t=Math.floor(rnd()*L.renkSayisi); deneme++; }
-    while(deneme<40 && baslangicKotu(r,c,t));
-    grid[r][c]=yeniGem(t,r,c);
+  if(L.duzen){
+    // Elde dizilmiş açılış: hiçbir şey rastgele değil, karıştırma da yok.
+    for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){
+      if(blocked[r][c]) continue;
+      grid[r][c]=yeniGem(parseInt(L.duzen[r][c],10)%L.renkSayisi,r,c);
+    }
+  }else{
+    for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){
+      if(blocked[r][c]) continue;
+      let t, deneme=0;
+      do{ t=Math.floor(rnd()*L.renkSayisi); deneme++; }
+      while(deneme<40 && baslangicKotu(r,c,t));
+      grid[r][c]=yeniGem(t,r,c);
+    }
+    let guvenlik=0;
+    while(!hamleVarMi() && guvenlik++<60) karistir(true);
   }
-  let guvenlik=0;
-  while(!hamleVarMi() && guvenlik++<60) karistir(true);
+
+  // tasarımın parçası olan özel taşlar (ör. 4. bölümün ortasındaki iki prizma)
+  if(L.gucler){
+    const tur={ row:P_ROW, col:P_COL, bomb:P_BOMB, prizma:P_PRISM };
+    for(const [r,c,t] of L.gucler){ const g=at(r,c); if(g) g.power=tur[t]||null; }
+  }
 
   // bazı bölümler hediye bir özel taşla açılıyor; görev sayacına yazılmaz
   if(L.hediye){
@@ -2001,6 +2073,9 @@ function tumHamleler(){
 function hamlePuani(a,b){
   const ga=at(a[0],a[1]), gb=at(b[0],b[1]);
   if(!ga||!gb) return 0;
+  // İki özel taşın buluşması tek bir özeli ateşlemekten her zaman güçlü;
+  // ipucu 4. bölümdeki iki prizmayı yan yana gösterebilsin diye ayrı sıralanıyor.
+  if(ga.power&&gb.power) return 120;
   if(ga.power||gb.power) return 60;         // özel taş takası her zaman güçlü
   const t=ga.type; ga.type=gb.type; gb.type=t;
   let p=0;
